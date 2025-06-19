@@ -28,12 +28,14 @@ This is a full-stack portfolio application built with React, Express, and Postgr
 - **Experience Views**: Multiple viewing modes (All, Tools, Industries, Education)
 - **Clean Design**: Minimalist white-based design following Sollo brand guidelines
 - **No Edit Controls**: Public view is read-only for visitors
+- **Rich Text Rendering**: Full markdown support with formatting and nested lists
 
 ### Admin Dashboard
 - **Secure Authentication**: Username/password login with session management
 - **Profile Management**: Edit name, brief introduction, and education categories
 - **Experience CRUD**: Full create, read, update, delete operations for experiences
 - **Dynamic Categories**: Customizable education categories that update form options
+- **Markdown Support**: Rich text formatting in descriptions and accomplishments
 
 ### Database Schema
 Main entities:
@@ -89,6 +91,39 @@ Admin credentials:
 - Password: [Contact administrator for secure credentials]
 - Access via: `/admin` route
 
+## Text Formatting Features
+
+### Markdown Support
+The application now supports comprehensive markdown formatting in experience descriptions and accomplishments:
+
+**Nested Bullet Points:**
+```
+- Main point
+  - Sub-point (2 spaces for indentation)
+    - Nested sub-point (4 spaces for indentation)
+- Another main point
+```
+
+**Text Formatting:**
+- `**bold text**` renders as **bold text**
+- `*italic text*` renders as *italic text*
+- `` `code text` `` renders as `code text` with gray background
+
+**Mixed Examples:**
+```
+Key accomplishments include:
+- **Increased** user engagement by *40%*
+- Led a team of `8 developers`
+  - Implemented code review process
+  - Mentored junior developers
+- Deployed new `authentication system`
+```
+
+All markdown formatting works across:
+- Public portfolio view
+- Admin dashboard view
+- All experience view modes (All, Tools, Industries, Education)
+
 ## Changelog
 
 - June 19, 2025: Initial portfolio setup with experience management
@@ -96,3 +131,4 @@ Admin credentials:
 - June 19, 2025: Implemented profile management and dynamic education categories
 - June 19, 2025: Separated public and admin functionality, removed edit controls from public view
 - June 19, 2025: Added company field to experience records with proper database migration and UI updates
+- June 19, 2025: Implemented comprehensive markdown support with nested bullet points, bold, italic, and code formatting
