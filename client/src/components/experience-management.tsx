@@ -26,6 +26,8 @@ export default function ExperienceManagement({
   onRefetch,
 }: ExperienceManagementProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [toolsSortOrder, setToolsSortOrder] = useState<'alphabetical' | 'frequency'>('alphabetical');
+  const [industriesSortOrder, setIndustriesSortOrder] = useState<'alphabetical' | 'frequency'>('alphabetical');
 
   const processedData = useMemo(() => {
     const toolsMap = new Map<string, { experiences: Experience[], usage: Map<string, string> }>();
@@ -63,20 +65,43 @@ export default function ExperienceManagement({
     return { toolsMap, industriesMap, educationMap };
   }, [experiences]);
 
+  const getSortedTools = () => {
+    const toolsArray = Array.from(processedData.toolsMap.entries());
+    
+    switch (toolsSortOrder) {
+      case 'alphabetical':
+        return toolsArray.sort(([a], [b]) => a.localeCompare(b));
+      case 'frequency':
+        return toolsArray.sort(([, a], [, b]) => b.experiences.length - a.experiences.length);
+      default:
+        return toolsArray;
+    }
+  };
+
+  const getSortedIndustries = () => {
+    const industriesArray = Array.from(processedData.industriesMap.entries());
+    
+    switch (industriesSortOrder) {
+      case 'alphabetical':
+        return industriesArray.sort(([a], [b]) => a.localeCompare(b));
+      case 'frequency':
+        return industriesArray.sort(([, a], [, b]) => b.length - a.length);
+      default:
+        return industriesArray;
+    }
+  };
+
   const renderAllView = () => (
     <div className="space-y-8">
       {experiences.map(experience => (
-        <div
-          key={experience.id}
-          className="mb-12 p-8 bg-gray-50 hover:bg-gray-100 transition-colors"
-        >
-          <div className="flex justify-between items-start mb-6">
+        <div key={experience.id} className="bg-gray-50 p-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <h3 className="font-baron text-2xl tracking-wide mb-2">{experience.jobTitle.toUpperCase()}</h3>
-              <p className="text-sollo-red font-medium text-lg">{experience.company}</p>
-              <p className="text-sollo-gold font-medium">{experience.industry}</p>
-              <p className="text-gray-500">
-                {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob || false)}
+              <h3 className="font-baron text-xl tracking-wide mb-1">{experience.jobTitle.toUpperCase()}</h3>
+              <p className="text-sollo-red font-medium mb-1">{experience.company}</p>
+              <p className="text-sollo-gold font-medium mb-1">{experience.industry}</p>
+              <p className="text-sm text-gray-600">
+                {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob)}
               </p>
             </div>
           </div>
@@ -165,79 +190,101 @@ export default function ExperienceManagement({
   );
 
   const renderToolsView = () => (
-    <div className="grid gap-8">
-      {Array.from(processedData.toolsMap.entries()).map(([toolName, toolData]) => (
-        <div key={toolName} className="p-6 border-l-4 border-sollo-gold">
-          <h3 className="font-baron text-xl tracking-wide mb-4">{toolName.toUpperCase()}</h3>
-          <div className="space-y-4">
-            {toolData.experiences.map(exp => (
-              <div key={exp.id} className="bg-gray-50 p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="font-semibold">{exp.jobTitle.toUpperCase()}</h4>
-                    <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Tools & Technologies</h3>
+        <select
+          value={toolsSortOrder}
+          onChange={(e) => setToolsSortOrder(e.target.value as any)}
+          className="px-3 py-1 border border-gray-200 rounded text-sm focus:border-sollo-gold focus:outline-none"
+        >
+          <option value="alphabetical">Alphabetical</option>
+          <option value="frequency">By Frequency</option>
+        </select>
+      </div>
+      <div className="grid gap-8">
+        {getSortedTools().map(([toolName, toolData]) => (
+          <div key={toolName} className="p-6 border-l-4 border-sollo-gold">
+            <h3 className="font-baron text-xl tracking-wide mb-4">{toolName.toUpperCase()}</h3>
+            <div className="space-y-4">
+              {toolData.experiences.map(exp => (
+                <div key={exp.id} className="bg-gray-50 p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-semibold">{exp.jobTitle.toUpperCase()}</h4>
+                      <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+                    </div>
+                    <span className="text-sm text-gray-500">{exp.industry}</span>
                   </div>
-                  <span className="text-sm text-gray-500">{exp.industry}</span>
+                  <p className="text-sm text-gray-700">
+                    {toolData.usage.get(exp.id.toString()) || 'Usage description not provided'}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-700">
-                  {toolData.usage.get(exp.id.toString()) || 'Usage description not provided'}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-      {processedData.toolsMap.size === 0 && (
-        <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">No tools data available.</p>
-        </div>
-      )}
+        ))}
+        {processedData.toolsMap.size === 0 && (
+          <div className="text-center py-16">
+            <p className="text-gray-600 text-lg">No tools data available.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 
   const renderIndustriesView = () => (
-    <div className="grid gap-8">
-      {Array.from(processedData.industriesMap.entries()).map(([industry, industryExperiences]) => (
-        <div key={industry} className="p-6 border-l-4 border-sollo-red">
-          <h3 className="font-baron text-xl tracking-wide mb-4">{industry.toUpperCase()}</h3>
-          <div className="space-y-4">
-            {industryExperiences.map(exp => (
-              <div key={exp.id} className="bg-gray-50 p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="font-semibold">{exp.jobTitle}</h4>
-                    <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Industries</h3>
+        <select
+          value={industriesSortOrder}
+          onChange={(e) => setIndustriesSortOrder(e.target.value as any)}
+          className="px-3 py-1 border border-gray-200 rounded text-sm focus:border-sollo-gold focus:outline-none"
+        >
+          <option value="alphabetical">Alphabetical</option>
+          <option value="frequency">By Frequency</option>
+        </select>
+      </div>
+      <div className="grid gap-8">
+        {getSortedIndustries().map(([industry, industryExperiences]) => (
+          <div key={industry} className="p-6 border-l-4 border-sollo-red">
+            <h3 className="font-baron text-xl tracking-wide mb-4">{industry.toUpperCase()}</h3>
+            <div className="space-y-4">
+              {industryExperiences.map(exp => (
+                <div key={exp.id} className="bg-gray-50 p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-semibold">{exp.jobTitle.toUpperCase()}</h4>
+                      <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob)}
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    {new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - 
-                    {exp.isCurrentJob ? ' Present' : new Date(exp.endDate || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                  </span>
                 </div>
-                <FormattedText text={exp.accomplishments} className="text-sm text-gray-700" />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-      {processedData.industriesMap.size === 0 && (
-        <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">No industry data available.</p>
-        </div>
-      )}
+        ))}
+        {processedData.industriesMap.size === 0 && (
+          <div className="text-center py-16">
+            <p className="text-gray-600 text-lg">No industries data available.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 
   const renderEducationView = () => (
     <div className="grid md:grid-cols-2 gap-8">
-      {Array.from(processedData.educationMap.entries()).map(([category, educationItems]) => (
-        <div key={category} className="p-6 bg-gray-50">
-          <h3 className="font-baron text-xl tracking-wide mb-4 text-sollo-red">
-            {category.toUpperCase()}
-          </h3>
-          <div className="space-y-3">
-            {educationItems.map((item, index) => (
-              <div key={index} className="border-l-4 border-sollo-red pl-4">
-                <div className="flex items-center gap-2">
+      {Array.from(processedData.educationMap.entries()).map(([category, items]) => (
+        <div key={category} className="p-6 border-l-4 border-sollo-gold">
+          <h3 className="font-baron text-xl tracking-wide mb-4">{category.toUpperCase()}</h3>
+          <div className="space-y-4">
+            {items.map((item, index) => (
+              <div key={index} className="bg-gray-50 p-4">
+                <div className="mb-2">
                   {item.link ? (
                     <a
                       href={item.link}
@@ -288,60 +335,35 @@ export default function ExperienceManagement({
   return (
     <section className="py-18 px-6">
       <div className="max-w-6xl mx-auto">
-        {/* View Navigation */}
-        <div className="mb-12">
-          <h2 className="font-baron text-4xl md:text-5xl tracking-wider mb-8 text-center">EXPERIENCE</h2>
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            <button
-              onClick={() => setViewMode('all')}
-              className={`px-6 py-3 text-sm font-medium transition-colors border ${
-                viewMode === 'all'
-                  ? 'bg-white border-sollo-red text-sollo-red'
-                  : 'bg-white border-gray-200 hover:border-sollo-red hover:text-sollo-red'
-              }`}
-            >
-              All Experiences
-            </button>
-            <button
-              onClick={() => setViewMode('tools')}
-              className={`px-6 py-3 text-sm font-medium transition-colors border ${
-                viewMode === 'tools'
-                  ? 'bg-white border-sollo-gold text-sollo-gold'
-                  : 'bg-white border-gray-200 hover:border-sollo-gold hover:text-sollo-gold'
-              }`}
-            >
-              By Tools
-            </button>
-            <button
-              onClick={() => setViewMode('industries')}
-              className={`px-6 py-3 text-sm font-medium transition-colors border ${
-                viewMode === 'industries'
-                  ? 'bg-white border-sollo-red text-sollo-red'
-                  : 'bg-white border-gray-200 hover:border-sollo-red hover:text-sollo-red'
-              }`}
-            >
-              By Industries
-            </button>
-            <button
-              onClick={() => setViewMode('education')}
-              className={`px-6 py-3 text-sm font-medium transition-colors border ${
-                viewMode === 'education'
-                  ? 'bg-white border-sollo-gold text-sollo-gold'
-                  : 'bg-white border-gray-200 hover:border-sollo-gold hover:text-sollo-gold'
-              }`}
-            >
-              Education
-            </button>
+        {/* View Toggle */}
+        <div className="flex justify-center mb-12">
+          <div className="flex bg-gray-100 p-1 rounded">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'tools', label: 'Tools' },
+              { key: 'industries', label: 'Industries' },
+              { key: 'education', label: 'Education' },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setViewMode(key as ViewMode)}
+                className={`px-6 py-2 text-sm font-medium transition-colors ${
+                  viewMode === key
+                    ? 'bg-white text-sollo-red shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* View Content */}
-        <div>
-          {viewMode === 'all' && renderAllView()}
-          {viewMode === 'tools' && renderToolsView()}
-          {viewMode === 'industries' && renderIndustriesView()}
-          {viewMode === 'education' && renderEducationView()}
-        </div>
+        {/* Content */}
+        {viewMode === 'all' && renderAllView()}
+        {viewMode === 'tools' && renderToolsView()}
+        {viewMode === 'industries' && renderIndustriesView()}
+        {viewMode === 'education' && renderEducationView()}
       </div>
     </section>
   );
