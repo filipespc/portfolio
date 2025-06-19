@@ -137,7 +137,7 @@ export default function ExperienceManagement({
               <div key={exp.id} className="bg-gray-50 p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h4 className="font-semibold">{exp.jobTitle}</h4>
+                    <h4 className="font-semibold">{exp.jobTitle.toUpperCase()}</h4>
                     <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
                   </div>
                   <span className="text-sm text-gray-500">{exp.industry}</span>
