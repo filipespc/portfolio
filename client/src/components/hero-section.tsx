@@ -18,27 +18,6 @@ export default function HeroSection() {
             {profile?.briefIntro || "Professional with extensive experience in building scalable digital products and leading cross-functional teams across various industries. Passionate about creating innovative solutions that drive business growth."}
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-3 gap-12 text-center">
-          <div>
-            <div className="text-3xl font-baron text-sollo-red mb-2">
-              <span id="years-experience">0+</span>
-            </div>
-            <p className="text-gray-600">Years Experience</p>
-          </div>
-          <div>
-            <div className="text-3xl font-baron text-sollo-gold mb-2">
-              <span id="projects-count">0+</span>
-            </div>
-            <p className="text-gray-600">Projects Completed</p>
-          </div>
-          <div>
-            <div className="text-3xl font-baron text-sollo-red mb-2">
-              <span id="industries-count">0+</span>
-            </div>
-            <p className="text-gray-600">Industries</p>
-          </div>
-        </div>
       </div>
     </section>
   );
