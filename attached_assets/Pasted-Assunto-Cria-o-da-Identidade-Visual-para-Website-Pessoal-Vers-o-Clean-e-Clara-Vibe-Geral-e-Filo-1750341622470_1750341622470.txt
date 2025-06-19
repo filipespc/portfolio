@@ -1,0 +1,37 @@
+Assunto: Criação da Identidade Visual para Website Pessoal (Versão Clean e Clara)
+
+Vibe Geral e Filosofia de Design:
+
+O objetivo é uma estética de elegância minimalista, que seja ao mesmo tempo clean, clara e luminosa. A base do design é o espaço em branco (negativo), criando uma sensação arejada e sofisticada. A personalidade de rock'n'roll, herdada da marca original, deve aparecer nos detalhes sutis — como as texturas, a tipografia de título e os pontos de cor — e não na estrutura geral. Pense em um design editorial moderno, onde o conteúdo respira.
+
+1. Layout e Estrutura:
+
+Base em Espaço em Branco: O layout deve ser predominantemente branco e aberto. A estrutura modular de blocos deve ser sugerida mais pelo alinhamento e pelo espaço negativo do que por molduras.
+Separadores Leves: Em vez de contornos pretos, use o espaço para separar os elementos. Se uma linha for absolutamente necessária, ela deve ser extremamente fina e em um tom de cinza claro (como 30% de preto). Evite molduras pretas e grossas.
+Hierarquia Clara: Use o layout para guiar o olho de forma intuitiva, com uma hierarquia visual clara, mas sem pesar.
+2. Paleta de Cores:
+
+Paleta Principal (Luminosa): A base da paleta é predominantemente clara.
+Branco: Deve ser a cor de fundo principal e dominante em todo o site para criar uma sensação de amplitude e limpeza.
+Preto e Cinzas (30%, 50%): Use o preto principalmente para o corpo de texto, garantindo máxima legibilidade. Os cinzas podem ser usados para textos secundários, ícones ou as linhas divisórias finas mencionadas anteriormente.
+Cores Complementares (Pontos de Destaque): Estas cores são o principal toque de personalidade. Use-as com moderação e intenção para criar impacto visual em um fundo neutro.
+Vermelho Sollo: R 217 G 39 B 45 — Perfeito para botões (calls-to-action), links em destaque ou um único bloco de cor para quebrar o design.
+Amarelo/Ouro Sollo: R 223 G 138 B 0 — Ideal para elementos gráficos, ícones ou como um fundo vibrante para uma seção de destaque específica.
+3. Tipografia:
+
+Títulos e Cabeçalhos: Mantenha a Baron Neue. Sendo uma fonte forte, use-a em tamanhos que sejam impactantes mas não opressivos. Deixe bastante espaço ao redor dos títulos.
+Corpo de Texto: Mantenha a Aperçu. Garanta que o texto seja disposto com um espaçamento generoso entre linhas (line-height) para facilitar a leitura e contribuir para a sensação de leveza.
+4. Tratamento de Imagens e Fotografia:
+
+Integração Fluida: As imagens (sejam em preto e branco ou com o efeito duotone) devem ser integradas de forma fluida no layout, muitas vezes sem nenhuma moldura, "sangrando" para o espaço em branco.
+Efeito Duotone como Destaque: O duotone com vermelho e amarelo se torna ainda mais poderoso aqui. Use-o como um ponto de cor ousado em uma página predominantemente branca para criar um foco de atenção imediato.
+5. Texturas e Overlays:
+
+Sutileza Extrema: A textura granulada deve ser extremamente sutil, quase imperceptível à primeira vista. A intenção é adicionar um caráter tátil e analógico que contraste com a estrutura clean, mas sem sujar ou pesar o design. Ela não deve, de forma alguma, comprometer a clareza ou o aspecto "clean" do branco.
+Aplicação Técnica: Mantenha os modos de mesclagem (blending modes) "Multiply" para texturas pretas e "Screen" para texturas brancas.
+6. Princípios a Evitar (Novas Regras):
+
+NÃO use grandes blocos de cor preta ou escura como fundo.
+NÃO use bordas e contornos pretos e espessos.
+NÃO sobrecarregue a página. Priorize o minimalismo e a respiração entre os elementos.
+Mantenha as regras anteriores: NÃO use gradientes, sombras ou efeitos 3D.
