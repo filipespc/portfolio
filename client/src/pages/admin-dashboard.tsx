@@ -194,14 +194,55 @@ export default function AdminDashboard() {
     return industriesOrder.filter(industry => processedData.industriesMap.has(industry));
   };
 
-  // Drag end handlers
+  // Save ordering mutations
+  const saveToolsOrderMutation = useMutation({
+    mutationFn: async (toolsOrder: string[]) => {
+      await apiRequest("/api/admin/tools-order", "PATCH", { toolsOrder });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Tools order saved successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to save tools order",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const saveIndustriesOrderMutation = useMutation({
+    mutationFn: async (industriesOrder: string[]) => {
+      await apiRequest("/api/admin/industries-order", "PATCH", { industriesOrder });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Industries order saved successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to save industries order",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Drag end handlers with auto-save
   const handleToolsDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
       const oldIndex = toolsOrder.indexOf(active.id as string);
       const newIndex = toolsOrder.indexOf(over.id as string);
-      setToolsOrder(arrayMove(toolsOrder, oldIndex, newIndex));
+      const newOrder = arrayMove(toolsOrder, oldIndex, newIndex);
+      setToolsOrder(newOrder);
+      saveToolsOrderMutation.mutate(newOrder);
     }
   };
 
@@ -211,7 +252,9 @@ export default function AdminDashboard() {
     if (over && active.id !== over.id) {
       const oldIndex = industriesOrder.indexOf(active.id as string);
       const newIndex = industriesOrder.indexOf(over.id as string);
-      setIndustriesOrder(arrayMove(industriesOrder, oldIndex, newIndex));
+      const newOrder = arrayMove(industriesOrder, oldIndex, newIndex);
+      setIndustriesOrder(newOrder);
+      saveIndustriesOrderMutation.mutate(newOrder);
     }
   };
 

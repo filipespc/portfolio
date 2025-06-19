@@ -39,6 +39,8 @@ export const profile = pgTable("profile", {
     'Finance',
     'Other'
   ]),
+  toolsOrder: text("tools_order").array().default([]),
+  industriesOrder: text("industries_order").array().default([]),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

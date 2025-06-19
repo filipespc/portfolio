@@ -105,6 +105,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Save tools ordering
+  app.patch("/api/admin/tools-order", requireAuth, async (req, res) => {
+    try {
+      const { toolsOrder } = req.body;
+      if (!Array.isArray(toolsOrder)) {
+        return res.status(400).json({ error: "toolsOrder must be an array" });
+      }
+      const updatedProfile = await storage.updateProfile({ toolsOrder });
+      res.json({ success: true, toolsOrder: updatedProfile.toolsOrder });
+    } catch (error) {
+      console.error("Error updating tools order:", error);
+      res.status(500).json({ error: "Failed to update tools order" });
+    }
+  });
+
+  // Save industries ordering
+  app.patch("/api/admin/industries-order", requireAuth, async (req, res) => {
+    try {
+      const { industriesOrder } = req.body;
+      if (!Array.isArray(industriesOrder)) {
+        return res.status(400).json({ error: "industriesOrder must be an array" });
+      }
+      const updatedProfile = await storage.updateProfile({ industriesOrder });
+      res.json({ success: true, industriesOrder: updatedProfile.industriesOrder });
+    } catch (error) {
+      console.error("Error updating industries order:", error);
+      res.status(500).json({ error: "Failed to update industries order" });
+    }
+  });
+
   // Public experience routes
   app.get("/api/experiences", async (req, res) => {
     try {
