@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Experience } from "@shared/schema";
 import { parseTools, parseEducation, formatDateRange } from "@/lib/utils";
+import FormattedText from "./formatted-text";
 
 interface ExperienceManagementProps {
   experiences: Experience[];
@@ -76,11 +77,11 @@ export default function ExperienceManagement({
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h4 className="font-semibold mb-3">Key Accomplishments</h4>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.accomplishments}</p>
+              <FormattedText text={experience.accomplishments} className="text-gray-700 leading-relaxed" />
               {experience.description && (
                 <>
                   <h4 className="font-semibold mb-3 mt-6">Job Description</h4>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.description}</p>
+                  <FormattedText text={experience.description} className="text-gray-700 leading-relaxed" />
                 </>
               )}
             </div>
@@ -176,7 +177,7 @@ export default function ExperienceManagement({
                     {exp.isCurrentJob ? ' Present' : new Date(exp.endDate || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                   </span>
                 </div>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">{exp.accomplishments}</p>
+                <FormattedText text={exp.accomplishments} className="text-sm text-gray-700" />
               </div>
             ))}
           </div>
