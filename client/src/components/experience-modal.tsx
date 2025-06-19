@@ -62,6 +62,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
     if (experience) {
       setFormData({
         jobTitle: experience.jobTitle,
+        company: experience.company,
         industry: experience.industry,
         startDate: experience.startDate,
         endDate: experience.endDate || '',
@@ -106,7 +107,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.jobTitle.trim() || !formData.industry.trim() || !formData.accomplishments.trim()) {
+    if (!formData.jobTitle.trim() || !formData.company.trim() || !formData.industry.trim() || !formData.accomplishments.trim()) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -182,6 +183,19 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
                 required
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Company *</label>
+              <input
+                type="text"
+                value={formData.company}
+                onChange={(e) => setFormData({...formData, company: e.target.value})}
+                className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Industry *</label>
               <input

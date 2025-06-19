@@ -67,7 +67,7 @@ Main entities:
 ## Data Management
 
 ### Experience Structure
-- Job title, industry, start/end dates
+- Job title, company name, industry, start/end dates
 - Current job flag for ongoing positions
 - Rich descriptions and accomplishments
 - Tools with usage descriptions (JSON storage)

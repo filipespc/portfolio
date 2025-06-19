@@ -65,6 +65,7 @@ export default function ExperienceManagement({
           <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="font-baron text-2xl tracking-wide mb-2">{experience.jobTitle.toUpperCase()}</h3>
+              <p className="text-sollo-red font-medium text-lg">{experience.company}</p>
               <p className="text-sollo-gold font-medium">{experience.industry}</p>
               <p className="text-gray-500">
                 {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob || false)}
@@ -135,7 +136,10 @@ export default function ExperienceManagement({
             {toolData.experiences.map(exp => (
               <div key={exp.id} className="bg-gray-50 p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold">{exp.jobTitle}</h4>
+                  <div>
+                    <h4 className="font-semibold">{exp.jobTitle}</h4>
+                    <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+                  </div>
                   <span className="text-sm text-gray-500">{exp.industry}</span>
                 </div>
                 <p className="text-sm text-gray-700">
@@ -163,7 +167,10 @@ export default function ExperienceManagement({
             {industryExperiences.map(exp => (
               <div key={exp.id} className="bg-gray-50 p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold">{exp.jobTitle}</h4>
+                  <div>
+                    <h4 className="font-semibold">{exp.jobTitle}</h4>
+                    <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
+                  </div>
                   <span className="text-sm text-gray-500">
                     {new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - 
                     {exp.isCurrentJob ? ' Present' : new Date(exp.endDate || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
@@ -194,6 +201,7 @@ export default function ExperienceManagement({
             {educationItems.map((item, index) => (
               <div key={index} className="border-l-4 border-sollo-red pl-4">
                 <h4 className="font-semibold text-sm">{item.name}</h4>
+                <p className="text-sm text-sollo-red font-medium">{item.experience.company}</p>
                 <p className="text-sm text-gray-600">{item.experience.industry}</p>
               </div>
             ))}
