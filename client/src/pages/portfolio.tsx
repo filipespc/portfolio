@@ -23,16 +23,13 @@ export default function Portfolio() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Experience Management */}
+      {/* Experience Management with View Selector */}
       <ExperienceManagement
         experiences={experiences}
         isLoading={isLoading}
         onEditExperience={() => {}} // No edit functionality on public page
         onRefetch={refetch}
       />
-
-      {/* Education Section */}
-      <EducationView />
     </div>
   );
 }
