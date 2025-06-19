@@ -1,10 +1,16 @@
-import { experiences, users, type Experience, type InsertExperience, type User, type InsertUser } from "@shared/schema";
+import { experiences, adminUsers, profile, type Experience, type InsertExperience, type AdminUser, type InsertAdminUser, type Profile, type InsertProfile } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  // User methods
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Admin user methods
+  getAdminUser(id: string): Promise<AdminUser | undefined>;
+  getAdminUserByUsername(username: string): Promise<AdminUser | undefined>;
+  createAdminUser(user: InsertAdminUser): Promise<AdminUser>;
+  
+  // Profile methods
+  getProfile(): Promise<Profile | undefined>;
+  updateProfile(profileData: Partial<InsertProfile>): Promise<Profile>;
   
   // Experience methods
   getAllExperiences(): Promise<Experience[]>;
@@ -14,68 +20,94 @@ export interface IStorage {
   deleteExperience(id: number): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private experiences: Map<number, Experience>;
-  private currentUserId: number;
-  private currentExperienceId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.experiences = new Map();
-    this.currentUserId = 1;
-    this.currentExperienceId = 1;
+export class DatabaseStorage implements IStorage {
+  // Admin user methods
+  async getAdminUser(id: string): Promise<AdminUser | undefined> {
+    const [user] = await db.select().from(adminUsers).where(eq(adminUsers.id, id));
+    return user || undefined;
   }
 
-  // User methods
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async getAdminUserByUsername(username: string): Promise<AdminUser | undefined> {
+    const [user] = await db.select().from(adminUsers).where(eq(adminUsers.username, username));
+    return user || undefined;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+  async createAdminUser(insertUser: InsertAdminUser): Promise<AdminUser> {
+    const id = Date.now().toString(); // Simple ID generation
+    const [user] = await db
+      .insert(adminUsers)
+      .values({ ...insertUser, id })
+      .returning();
     return user;
+  }
+
+  // Profile methods
+  async getProfile(): Promise<Profile | undefined> {
+    const [profileData] = await db.select().from(profile).limit(1);
+    if (!profileData) {
+      // Create default profile if none exists
+      const [newProfile] = await db
+        .insert(profile)
+        .values({})
+        .returning();
+      return newProfile;
+    }
+    return profileData;
+  }
+
+  async updateProfile(profileData: Partial<InsertProfile>): Promise<Profile> {
+    const existingProfile = await this.getProfile();
+    if (existingProfile) {
+      const [updated] = await db
+        .update(profile)
+        .set({ ...profileData, updatedAt: new Date() })
+        .where(eq(profile.id, existingProfile.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(profile)
+        .values(profileData)
+        .returning();
+      return created;
+    }
   }
 
   // Experience methods
   async getAllExperiences(): Promise<Experience[]> {
-    return Array.from(this.experiences.values()).sort((a, b) => {
+    const experienceList = await db.select().from(experiences);
+    return experienceList.sort((a, b) => {
       // Sort by start date descending (most recent first)
       return b.startDate.localeCompare(a.startDate);
     });
   }
 
   async getExperience(id: number): Promise<Experience | undefined> {
-    return this.experiences.get(id);
+    const [experience] = await db.select().from(experiences).where(eq(experiences.id, id));
+    return experience || undefined;
   }
 
   async createExperience(insertExperience: InsertExperience): Promise<Experience> {
-    const id = this.currentExperienceId++;
-    const experience: Experience = { ...insertExperience, id };
-    this.experiences.set(id, experience);
+    const [experience] = await db
+      .insert(experiences)
+      .values(insertExperience)
+      .returning();
     return experience;
   }
 
   async updateExperience(id: number, updateData: Partial<InsertExperience>): Promise<Experience | undefined> {
-    const existing = this.experiences.get(id);
-    if (!existing) return undefined;
-    
-    const updated: Experience = { ...existing, ...updateData };
-    this.experiences.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(experiences)
+      .set(updateData)
+      .where(eq(experiences.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async deleteExperience(id: number): Promise<boolean> {
-    return this.experiences.delete(id);
+    const result = await db.delete(experiences).where(eq(experiences.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
