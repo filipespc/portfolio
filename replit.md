@@ -73,7 +73,7 @@ Main entities:
 - Current job flag for ongoing positions
 - Rich descriptions and accomplishments
 - Tools with usage descriptions (JSON storage)
-- Education with categorization (JSON storage)
+- Education with categorization, dates, and certificate links (JSON storage)
 
 ### Profile Configuration
 - Editable site name and introduction
@@ -132,3 +132,4 @@ All markdown formatting works across:
 - June 19, 2025: Separated public and admin functionality, removed edit controls from public view
 - June 19, 2025: Added company field to experience records with proper database migration and UI updates
 - June 19, 2025: Implemented comprehensive markdown support with nested bullet points, bold, italic, and code formatting
+- June 19, 2025: Added date functionality to education entries with display across all views and admin editing interface
