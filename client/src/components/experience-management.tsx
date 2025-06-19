@@ -3,25 +3,6 @@ import { Experience } from "@shared/schema";
 import { parseTools, formatDateRange } from "@/lib/utils";
 import FormattedText from "./formatted-text";
 import EducationView from "./education-view";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 interface ExperienceManagementProps {
   experiences: Experience[];
@@ -32,47 +13,6 @@ interface ExperienceManagementProps {
 
 type MainView = 'experiences' | 'education';
 type ExperienceViewMode = 'all' | 'tools' | 'industries';
-
-// Sortable item component for tools and industries
-function SortableItem({ 
-  id, 
-  children, 
-  isDragging 
-}: { 
-  id: string; 
-  children: React.ReactNode; 
-  isDragging?: boolean;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <div className="flex items-center gap-3">
-        <button
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
-          </svg>
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 export default function ExperienceManagement({
   experiences,
@@ -109,58 +49,15 @@ export default function ExperienceManagement({
     return { toolsMap, industriesMap };
   }, [experiences]);
 
-  // Initialize order arrays when data changes
+  // Get sorted tools and industries (alphabetical for public view)
   const getSortedTools = () => {
     const toolsArray = Array.from(processedData.toolsMap.entries());
-    
-    if (toolsOrder.length === 0) {
-      // Initialize with alphabetical order
-      const initialOrder = toolsArray.sort(([a], [b]) => a.localeCompare(b)).map(([name]) => name);
-      setToolsOrder(initialOrder);
-      return toolsArray.sort(([a], [b]) => a.localeCompare(b));
-    }
-    
-    // Sort by manual order
-    return toolsOrder
-      .map(toolName => toolsArray.find(([name]) => name === toolName))
-      .filter((item): item is [string, { experiences: Experience[], usage: Map<string, string> }] => item !== undefined);
+    return toolsArray.sort(([a], [b]) => a.localeCompare(b));
   };
 
   const getSortedIndustries = () => {
     const industriesArray = Array.from(processedData.industriesMap.entries());
-    
-    if (industriesOrder.length === 0) {
-      // Initialize with alphabetical order
-      const initialOrder = industriesArray.sort(([a], [b]) => a.localeCompare(b)).map(([name]) => name);
-      setIndustriesOrder(initialOrder);  
-      return industriesArray.sort(([a], [b]) => a.localeCompare(b));
-    }
-    
-    // Sort by manual order
-    return industriesOrder
-      .map(industryName => industriesArray.find(([name]) => name === industryName))
-      .filter((item): item is [string, Experience[]] => item !== undefined);
-  };
-
-  // Drag end handlers
-  const handleToolsDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    if (over && active.id !== over.id) {
-      const oldIndex = toolsOrder.indexOf(active.id as string);
-      const newIndex = toolsOrder.indexOf(over.id as string);
-      setToolsOrder(arrayMove(toolsOrder, oldIndex, newIndex));
-    }
-  };
-
-  const handleIndustriesDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    if (over && active.id !== over.id) {
-      const oldIndex = industriesOrder.indexOf(active.id as string);
-      const newIndex = industriesOrder.indexOf(over.id as string);
-      setIndustriesOrder(arrayMove(industriesOrder, oldIndex, newIndex));
-    }
+    return industriesArray.sort(([a], [b]) => a.localeCompare(b));
   };
 
   const renderAllView = () => (
@@ -227,92 +124,78 @@ export default function ExperienceManagement({
   );
 
   const renderToolsView = () => (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleToolsDragEnd}>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-baron text-lg tracking-wide">TOOLS & TECHNOLOGIES</h3>
-          <div className="text-sm text-gray-500">Drag to reorder</div>
-        </div>
-        
-        <SortableContext items={toolsOrder} strategy={verticalListSortingStrategy}>
-          {getSortedTools().map(([toolName, { experiences: toolExperiences, usage }]) => (
-            <SortableItem key={toolName} id={toolName}>
-              <div className="bg-gray-50 p-6 flex-1">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-baron text-xl tracking-wide">{toolName.toUpperCase()}</h3>
-                  <span className="text-sm text-gray-500">{toolExperiences.length} experience{toolExperiences.length !== 1 ? 's' : ''}</span>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-baron text-lg tracking-wide">TOOLS & TECHNOLOGIES</h3>
+      </div>
+      
+      {getSortedTools().map(([toolName, { experiences: toolExperiences, usage }]) => (
+        <div key={toolName} className="bg-gray-50 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-baron text-xl tracking-wide">{toolName.toUpperCase()}</h3>
+            <span className="text-sm text-gray-500">{toolExperiences.length} experience{toolExperiences.length !== 1 ? 's' : ''}</span>
+          </div>
+          
+          <div className="space-y-4">
+            {toolExperiences.map(exp => (
+              <div key={exp.id} className="border-l-4 border-sollo-gold pl-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h4 className="font-semibold text-lg">{exp.jobTitle}</h4>
+                    <p className="text-sollo-red font-medium">{exp.company}</p>
+                    <p className="text-sm text-gray-600">
+                      {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob || false)}
+                    </p>
+                  </div>
                 </div>
                 
-                <div className="space-y-4">
-                  {toolExperiences.map(exp => (
-                    <div key={exp.id} className="border-l-4 border-sollo-gold pl-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 className="font-semibold text-lg">{exp.jobTitle}</h4>
-                          <p className="text-sollo-red font-medium">{exp.company}</p>
-                          <p className="text-sm text-gray-600">
-                            {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob || false)}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-700 font-medium mb-2">Usage:</p>
-                        <p className="text-sm text-gray-600">{usage.get(exp.id.toString()) || 'No specific usage details'}</p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-3">
+                  <p className="text-sm text-gray-700 font-medium mb-2">Usage:</p>
+                  <p className="text-sm text-gray-600">{usage.get(exp.id.toString()) || 'No specific usage details'}</p>
                 </div>
               </div>
-            </SortableItem>
-          ))}
-        </SortableContext>
-      </div>
-    </DndContext>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 
   const renderIndustriesView = () => (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIndustriesDragEnd}>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-baron text-lg tracking-wide">BY INDUSTRIES</h3>
-          <div className="text-sm text-gray-500">Drag to reorder</div>
-        </div>
-        
-        <SortableContext items={industriesOrder} strategy={verticalListSortingStrategy}>
-          {getSortedIndustries().map(([industryName, industryExperiences]) => (
-            <SortableItem key={industryName} id={industryName}>
-              <div className="bg-gray-50 p-6 flex-1">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-baron text-xl tracking-wide">{industryName.toUpperCase()}</h3>
-                  <span className="text-sm text-gray-500">{industryExperiences.length} experience{industryExperiences.length !== 1 ? 's' : ''}</span>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-baron text-lg tracking-wide">BY INDUSTRIES</h3>
+      </div>
+      
+      {getSortedIndustries().map(([industryName, industryExperiences]) => (
+        <div key={industryName} className="bg-gray-50 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-baron text-xl tracking-wide">{industryName.toUpperCase()}</h3>
+            <span className="text-sm text-gray-500">{industryExperiences.length} experience{industryExperiences.length !== 1 ? 's' : ''}</span>
+          </div>
+          
+          <div className="space-y-6">
+            {industryExperiences.map(exp => (
+              <div key={exp.id} className="border-l-4 border-sollo-red pl-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h4 className="font-semibold text-lg">{exp.jobTitle}</h4>
+                    <p className="text-sollo-red font-medium">{exp.company}</p>
+                    <p className="text-sm text-gray-600">
+                      {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob || false)}
+                    </p>
+                  </div>
                 </div>
                 
-                <div className="space-y-6">
-                  {industryExperiences.map(exp => (
-                    <div key={exp.id} className="border-l-4 border-sollo-red pl-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 className="font-semibold text-lg">{exp.jobTitle}</h4>
-                          <p className="text-sollo-red font-medium">{exp.company}</p>
-                          <p className="text-sm text-gray-600">
-                            {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob || false)}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-3">
-                        <FormattedText text={exp.accomplishments} className="text-gray-700 leading-relaxed text-sm" />
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-3">
+                  <FormattedText text={exp.accomplishments} className="text-gray-700 leading-relaxed text-sm" />
                 </div>
               </div>
-            </SortableItem>
-          ))}
-        </SortableContext>
-      </div>
-    </DndContext>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 
   if (isLoading) {
