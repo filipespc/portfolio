@@ -56,3 +56,44 @@ export function stringifyTools(tools: Array<{name: string, usage: string}>): str
 export function stringifyEducation(education: Array<{name: string, category: string}>): string[] {
   return education.map(edu => JSON.stringify(edu));
 }
+
+// Check if text contains bullet points
+export function hasBulletPoints(text: string): boolean {
+  return text.includes('\n- ') || text.startsWith('- ');
+}
+
+// Parse text into structured content
+export function parseTextContent(text: string): Array<{type: 'paragraph' | 'list', content: string | string[]}> {
+  if (!text) return [];
+  
+  const lines = text.split('\n');
+  const result: Array<{type: 'paragraph' | 'list', content: string | string[]}> = [];
+  let currentList: string[] = [];
+  
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    
+    if (trimmedLine.startsWith('- ')) {
+      // This is a bullet point
+      currentList.push(trimmedLine.substring(2).trim());
+    } else {
+      // Not a bullet point
+      if (currentList.length > 0) {
+        // Finish current list
+        result.push({ type: 'list', content: [...currentList] });
+        currentList = [];
+      }
+      
+      if (trimmedLine) {
+        result.push({ type: 'paragraph', content: trimmedLine });
+      }
+    }
+  }
+  
+  // Handle any remaining list
+  if (currentList.length > 0) {
+    result.push({ type: 'list', content: currentList });
+  }
+  
+  return result;
+}

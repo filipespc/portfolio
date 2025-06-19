@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Experience } from "@shared/schema";
 import { formatDateRange, parseTools, parseEducation } from "@/lib/utils";
+import FormattedText from "./formatted-text";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -88,11 +89,11 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
       <div className="grid md:grid-cols-2 gap-8">
         <div>
           <h4 className="font-semibold mb-3">Key Accomplishments</h4>
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.accomplishments}</p>
+          <FormattedText text={experience.accomplishments} className="text-gray-700 leading-relaxed" />
           {experience.description && (
             <>
               <h4 className="font-semibold mb-3 mt-6">Job Description</h4>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.description}</p>
+              <FormattedText text={experience.description} className="text-gray-700 leading-relaxed" />
             </>
           )}
         </div>
