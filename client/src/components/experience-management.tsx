@@ -82,15 +82,6 @@ export default function ExperienceManagement({
 }: ExperienceManagementProps) {
   const [mainView, setMainView] = useState<MainView>('experiences');
   const [experienceViewMode, setExperienceViewMode] = useState<ExperienceViewMode>('all');
-  const [toolsOrder, setToolsOrder] = useState<string[]>([]);
-  const [industriesOrder, setIndustriesOrder] = useState<string[]>([]);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   const processedData = useMemo(() => {
     const toolsMap = new Map<string, { experiences: Experience[], usage: Map<string, string> }>();

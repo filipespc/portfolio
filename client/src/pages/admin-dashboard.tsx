@@ -1,18 +1,76 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Experience, Profile, Education } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { parseTools } from "@/lib/utils";
 import ExperienceModal from "@/components/experience-modal";
 import ExperienceCard from "@/components/experience-card";
 import SortableExperienceList from "@/components/sortable-experience-list";
 import EducationModal from "@/components/education-modal";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface ProfileFormData {
   name: string;
   briefIntro: string;
   educationCategories: string[];
+}
+
+// Sortable item component for admin ordering
+function AdminSortableItem({ 
+  id, 
+  children 
+}: { 
+  id: string; 
+  children: React.ReactNode; 
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} className="bg-white border border-gray-200 p-4 mb-2">
+      <div className="flex items-center gap-3">
+        <button
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
+          </svg>
+        </button>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export default function AdminDashboard() {
@@ -21,9 +79,19 @@ export default function AdminDashboard() {
   const [showEducationModal, setShowEducationModal] = useState(false);
   const [editingEducation, setEditingEducation] = useState<Education | null>(null);
   const [activeTab, setActiveTab] = useState<'profile' | 'experiences' | 'education'>('profile');
+  const [experienceSubTab, setExperienceSubTab] = useState<'list' | 'tools-order' | 'industries-order'>('list');
+  const [toolsOrder, setToolsOrder] = useState<string[]>([]);
+  const [industriesOrder, setIndustriesOrder] = useState<string[]>([]);
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Profile data and mutations
   const { data: profile, refetch: refetchProfile } = useQuery<Profile>({
@@ -77,6 +145,75 @@ export default function AdminDashboard() {
   const { data: education = [], refetch: refetchEducation } = useQuery<Education[]>({
     queryKey: ["/api/education"],
   });
+
+  // Process tools and industries data
+  const processedData = useMemo(() => {
+    const toolsMap = new Map<string, { experiences: Experience[], usage: Map<string, string> }>();
+    const industriesMap = new Map<string, Experience[]>();
+
+    experiences.forEach(exp => {
+      // Process tools
+      const tools = parseTools(exp.tools || []);
+      tools.forEach(tool => {
+        if (!toolsMap.has(tool.name)) {
+          toolsMap.set(tool.name, { experiences: [], usage: new Map() });
+        }
+        const toolData = toolsMap.get(tool.name)!;
+        toolData.experiences.push(exp);
+        toolData.usage.set(exp.id.toString(), tool.usage);
+      });
+
+      // Process industries
+      if (!industriesMap.has(exp.industry)) {
+        industriesMap.set(exp.industry, []);
+      }
+      industriesMap.get(exp.industry)!.push(exp);
+    });
+
+    return { toolsMap, industriesMap };
+  }, [experiences]);
+
+  // Initialize order arrays
+  const getToolsList = () => {
+    const toolsArray = Array.from(processedData.toolsMap.keys());
+    if (toolsOrder.length === 0 && toolsArray.length > 0) {
+      const initialOrder = toolsArray.sort((a, b) => a.localeCompare(b));
+      setToolsOrder(initialOrder);
+      return initialOrder;
+    }
+    return toolsOrder.filter(tool => processedData.toolsMap.has(tool));
+  };
+
+  const getIndustriesList = () => {
+    const industriesArray = Array.from(processedData.industriesMap.keys());
+    if (industriesOrder.length === 0 && industriesArray.length > 0) {
+      const initialOrder = industriesArray.sort((a, b) => a.localeCompare(b));
+      setIndustriesOrder(initialOrder);
+      return initialOrder;
+    }
+    return industriesOrder.filter(industry => processedData.industriesMap.has(industry));
+  };
+
+  // Drag end handlers
+  const handleToolsDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = toolsOrder.indexOf(active.id as string);
+      const newIndex = toolsOrder.indexOf(over.id as string);
+      setToolsOrder(arrayMove(toolsOrder, oldIndex, newIndex));
+    }
+  };
+
+  const handleIndustriesDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = industriesOrder.indexOf(active.id as string);
+      const newIndex = industriesOrder.indexOf(over.id as string);
+      setIndustriesOrder(arrayMove(industriesOrder, oldIndex, newIndex));
+    }
+  };
 
   // Update form when profile loads
   useState(() => {
@@ -344,11 +481,123 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <SortableExperienceList
-              experiences={experiences}
-              onEditExperience={handleEditExperience}
-              onDeleteExperience={handleDeleteExperience}
-            />
+            {/* Experience Management Sub-tabs */}
+            <div className="mb-8">
+              <div className="flex gap-2 border-b border-gray-200">
+                <button
+                  onClick={() => setExperienceSubTab('list')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    experienceSubTab === 'list'
+                      ? 'border-sollo-gold text-sollo-gold'
+                      : 'border-transparent text-gray-500 hover:text-sollo-gold'
+                  }`}
+                >
+                  Experience List
+                </button>
+                <button
+                  onClick={() => setExperienceSubTab('tools-order')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    experienceSubTab === 'tools-order'
+                      ? 'border-sollo-gold text-sollo-gold'
+                      : 'border-transparent text-gray-500 hover:text-sollo-gold'
+                  }`}
+                >
+                  Tools Order
+                </button>
+                <button
+                  onClick={() => setExperienceSubTab('industries-order')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    experienceSubTab === 'industries-order'
+                      ? 'border-sollo-gold text-sollo-gold'
+                      : 'border-transparent text-gray-500 hover:text-sollo-gold'
+                  }`}
+                >
+                  Industries Order
+                </button>
+              </div>
+            </div>
+
+            {experienceSubTab === 'list' && (
+              <SortableExperienceList
+                experiences={experiences}
+                onEditExperience={handleEditExperience}
+                onDeleteExperience={handleDeleteExperience}
+              />
+            )}
+
+            {experienceSubTab === 'tools-order' && (
+              <div className="space-y-4">
+                <p className="text-gray-600 mb-4">Drag and drop to reorder how tools appear in the "By Tools" view on your portfolio.</p>
+                
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleToolsDragEnd}>
+                  <SortableContext items={getToolsList()} strategy={verticalListSortingStrategy}>
+                    {getToolsList().map((toolName) => {
+                      const toolData = processedData.toolsMap.get(toolName);
+                      if (!toolData) return null;
+                      
+                      return (
+                        <AdminSortableItem key={toolName} id={toolName}>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-semibold text-lg">{toolName}</h4>
+                              <span className="text-sm text-gray-500">
+                                {toolData.experiences.length} experience{toolData.experiences.length !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                            <div className="mt-2 text-sm text-gray-600">
+                              Used in: {toolData.experiences.map(exp => exp.company).join(', ')}
+                            </div>
+                          </div>
+                        </AdminSortableItem>
+                      );
+                    })}
+                  </SortableContext>
+                </DndContext>
+                
+                {getToolsList().length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No tools found. Add experiences with tools to manage their order.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {experienceSubTab === 'industries-order' && (
+              <div className="space-y-4">
+                <p className="text-gray-600 mb-4">Drag and drop to reorder how industries appear in the "By Industries" view on your portfolio.</p>
+                
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIndustriesDragEnd}>
+                  <SortableContext items={getIndustriesList()} strategy={verticalListSortingStrategy}>
+                    {getIndustriesList().map((industryName) => {
+                      const industryExperiences = processedData.industriesMap.get(industryName);
+                      if (!industryExperiences) return null;
+                      
+                      return (
+                        <AdminSortableItem key={industryName} id={industryName}>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-semibold text-lg">{industryName}</h4>
+                              <span className="text-sm text-gray-500">
+                                {industryExperiences.length} experience{industryExperiences.length !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                            <div className="mt-2 text-sm text-gray-600">
+                              Companies: {industryExperiences.map(exp => exp.company).join(', ')}
+                            </div>
+                          </div>
+                        </AdminSortableItem>
+                      );
+                    })}
+                  </SortableContext>
+                </DndContext>
+                
+                {getIndustriesList().length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No industries found. Add experiences to manage their order.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
