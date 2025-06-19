@@ -86,7 +86,7 @@ Preferred communication style: Simple, everyday language.
 
 Admin credentials:
 - Username: admin
-- Password: L])j4eh010ml~R.!CTRQ
+- Password: [Contact administrator for secure credentials]
 - Access via: `/admin` route
 
 ## Changelog
