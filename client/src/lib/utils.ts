@@ -38,6 +38,10 @@ export function parseTools(tools: string[]): Array<{name: string, usage: string}
 
 // Parse education array
 export function parseEducation(education: string[]): Array<{name: string, category: string, link?: string, date?: string}> {
+  if (!education || !Array.isArray(education)) {
+    return [];
+  }
+  
   return education.map(edu => {
     try {
       const parsed = JSON.parse(edu);
