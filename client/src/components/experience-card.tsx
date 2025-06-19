@@ -88,11 +88,11 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
       <div className="grid md:grid-cols-2 gap-8">
         <div>
           <h4 className="font-semibold mb-3">Key Accomplishments</h4>
-          <p className="text-gray-700 leading-relaxed">{experience.accomplishments}</p>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.accomplishments}</p>
           {experience.description && (
             <>
               <h4 className="font-semibold mb-3 mt-6">Job Description</h4>
-              <p className="text-gray-700 leading-relaxed">{experience.description}</p>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{experience.description}</p>
             </>
           )}
         </div>
