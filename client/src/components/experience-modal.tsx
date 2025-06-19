@@ -20,6 +20,7 @@ interface EducationEntry {
   name: string;
   category: string;
   link?: string;
+  date?: string;
 }
 
 export default function ExperienceModal({ experience, onClose, onSave }: ExperienceModalProps) {
@@ -335,14 +336,23 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
                       ))}
                     </select>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <input
                       type="url"
                       placeholder="Certificate link (optional)"
                       value={edu.link || ''}
                       onChange={(e) => updateEducation(index, 'link', e.target.value)}
-                      className="flex-1 p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
+                      className="p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
                     />
+                    <input
+                      type="text"
+                      placeholder="Date (e.g., 2023, Jan 2023, 2023-01)"
+                      value={edu.date || ''}
+                      onChange={(e) => updateEducation(index, 'date', e.target.value)}
+                      className="p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex justify-end">
                     {education.length > 1 && (
                       <button
                         type="button"

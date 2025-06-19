@@ -15,6 +15,7 @@ type ViewMode = 'all' | 'tools' | 'industries' | 'education';
 type EducationItem = {
   name: string;
   link?: string;
+  date?: string;
   experience: Experience;
 };
 
@@ -55,7 +56,7 @@ export default function ExperienceManagement({
         if (!educationMap.has(edu.category)) {
           educationMap.set(edu.category, []);
         }
-        educationMap.get(edu.category)!.push({ name: edu.name, link: edu.link, experience: exp });
+        educationMap.get(edu.category)!.push({ name: edu.name, link: edu.link, date: edu.date, experience: exp });
       });
     });
 
