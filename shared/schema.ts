@@ -53,8 +53,15 @@ export const experiences = pgTable("experiences", {
   description: text("description").notNull(),
   accomplishments: text("accomplishments").notNull(),
   tools: text("tools").array().default([]), // JSON array of tool objects {name: string, usage: string}
-  education: text("education").array().default([]), // JSON array of education objects {name: string, category: string}
-  sortOrder: integer("sort_order").default(0), // For manual ordering
+});
+
+export const education = pgTable("education", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  link: text("link"),
+  date: text("date"), // Format: YYYY-MM or descriptive text
+  sortOrder: integer("sort_order").default(0), // For manual ordering within categories
 });
 
 // Schema definitions
@@ -73,6 +80,10 @@ export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({
   updatedAt: true,
 });
 
+export const insertEducationSchema = createInsertSchema(education).omit({
+  id: true,
+});
+
 // Type definitions
 export type InsertExperience = z.infer<typeof insertExperienceSchema>;
 export type Experience = typeof experiences.$inferSelect;
@@ -80,3 +91,5 @@ export type Profile = typeof profile.$inferSelect;
 export type InsertProfile = z.infer<typeof insertProfileSchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
+export type Education = typeof education.$inferSelect;
+export type InsertEducation = z.infer<typeof insertEducationSchema>;

@@ -76,8 +76,11 @@ export class DatabaseStorage implements IStorage {
 
   // Experience methods
   async getAllExperiences(): Promise<Experience[]> {
-    const experienceList = await db.select().from(experiences).orderBy(experiences.sortOrder, experiences.startDate);
-    return experienceList;
+    const experienceList = await db.select().from(experiences);
+    return experienceList.sort((a, b) => {
+      // Sort by start date descending (most recent first)
+      return b.startDate.localeCompare(a.startDate);
+    });
   }
 
   async getExperience(id: number): Promise<Experience | undefined> {
