@@ -1,4 +1,4 @@
-import { experiences, adminUsers, profile, type Experience, type InsertExperience, type AdminUser, type InsertAdminUser, type Profile, type InsertProfile } from "@shared/schema";
+import { experiences, adminUsers, profile, education, type Experience, type InsertExperience, type AdminUser, type InsertAdminUser, type Profile, type InsertProfile, type Education, type InsertEducation } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -18,7 +18,14 @@ export interface IStorage {
   createExperience(experience: InsertExperience): Promise<Experience>;
   updateExperience(id: number, experience: Partial<InsertExperience>): Promise<Experience | undefined>;
   deleteExperience(id: number): Promise<boolean>;
-  reorderExperiences(experienceIds: number[]): Promise<void>;
+  
+  // Education methods
+  getAllEducation(): Promise<Education[]>;
+  getEducation(id: number): Promise<Education | undefined>;
+  createEducation(education: InsertEducation): Promise<Education>;
+  updateEducation(id: number, education: Partial<InsertEducation>): Promise<Education | undefined>;
+  deleteEducation(id: number): Promise<boolean>;
+  reorderEducation(educationIds: number[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -110,13 +117,46 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount ? result.rowCount > 0 : false;
   }
 
-  async reorderExperiences(experienceIds: number[]): Promise<void> {
-    // Update sort order for each experience
-    for (let i = 0; i < experienceIds.length; i++) {
+  // Education methods
+  async getAllEducation(): Promise<Education[]> {
+    const educationList = await db.select().from(education).orderBy(education.category, education.sortOrder);
+    return educationList;
+  }
+
+  async getEducation(id: number): Promise<Education | undefined> {
+    const [educationItem] = await db.select().from(education).where(eq(education.id, id));
+    return educationItem || undefined;
+  }
+
+  async createEducation(insertEducation: InsertEducation): Promise<Education> {
+    const [educationItem] = await db
+      .insert(education)
+      .values(insertEducation)
+      .returning();
+    return educationItem;
+  }
+
+  async updateEducation(id: number, updateData: Partial<InsertEducation>): Promise<Education | undefined> {
+    const [updated] = await db
+      .update(education)
+      .set(updateData)
+      .where(eq(education.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteEducation(id: number): Promise<boolean> {
+    const result = await db.delete(education).where(eq(education.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  async reorderEducation(educationIds: number[]): Promise<void> {
+    // Update sort order for each education item
+    for (let i = 0; i < educationIds.length; i++) {
       await db
-        .update(experiences)
+        .update(education)
         .set({ sortOrder: i })
-        .where(eq(experiences.id, experienceIds[i]));
+        .where(eq(education.id, educationIds[i]));
     }
   }
 }

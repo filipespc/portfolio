@@ -10,7 +10,7 @@ interface ExperienceManagementProps {
   onRefetch: () => void;
 }
 
-type ViewMode = 'all' | 'tools' | 'industries' | 'education';
+type ViewMode = 'all' | 'tools' | 'industries';
 
 type EducationItem = {
   name: string;
@@ -52,14 +52,7 @@ export default function ExperienceManagement({
       }
       industriesMap.get(exp.industry)!.push(exp);
 
-      // Process education
-      const education = parseEducation(exp.education || []);
-      education.forEach(edu => {
-        if (!educationMap.has(edu.category)) {
-          educationMap.set(edu.category, []);
-        }
-        educationMap.get(edu.category)!.push({ name: edu.name, link: edu.link, date: edu.date, experience: exp });
-      });
+      // Education is now managed separately - remove this processing
     });
 
     return { toolsMap, industriesMap, educationMap };
@@ -131,40 +124,7 @@ export default function ExperienceManagement({
               </div>
             )}
 
-            {/* Education - Full width */}
-            {parseEducation(experience.education || []).length > 0 && (
-              <div>
-                <h4 className="font-semibold mb-3">Education Acquired</h4>
-                <div className="flex flex-wrap gap-2">
-                  {parseEducation(experience.education || []).map((edu, index) => (
-                    <div key={index} className="bg-sollo-gold bg-opacity-20 px-3 py-2 text-sm">
-                      <div className="text-black font-bold">
-                        {edu.link ? (
-                          <a
-                            href={edu.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-black hover:text-gray-700 underline flex items-center gap-1"
-                          >
-                            {edu.name}
-                            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </a>
-                        ) : (
-                          edu.name
-                        )}
-                      </div>
-                      {edu.date && (
-                        <div className="text-xs text-gray-700 mt-1 font-bold">
-                          {edu.date}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             {/* Accomplishments and Description - Full width */}
             <div>
@@ -276,48 +236,7 @@ export default function ExperienceManagement({
     </div>
   );
 
-  const renderEducationView = () => (
-    <div className="grid md:grid-cols-2 gap-8">
-      {Array.from(processedData.educationMap.entries()).map(([category, items]) => (
-        <div key={category} className="p-6 border-l-4 border-sollo-gold">
-          <h3 className="font-baron text-xl tracking-wide mb-4">{category.toUpperCase()}</h3>
-          <div className="space-y-4">
-            {items.map((item, index) => (
-              <div key={index} className="bg-gray-50 p-4">
-                <div className="mb-2">
-                  {item.link ? (
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-sm text-sollo-red hover:text-sollo-red/80 flex items-center gap-1"
-                    >
-                      {item.name}
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  ) : (
-                    <h4 className="font-semibold text-sm">{item.name}</h4>
-                  )}
-                  {item.date && (
-                    <p className="text-xs text-gray-500 mt-1">{item.date}</p>
-                  )}
-                </div>
-                <p className="text-sm text-sollo-red font-medium">{item.experience.company}</p>
-                <p className="text-sm text-gray-600">{item.experience.industry}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-      {processedData.educationMap.size === 0 && (
-        <div className="text-center py-16 col-span-2">
-          <p className="text-gray-600 text-lg">No education data available.</p>
-        </div>
-      )}
-    </div>
-  );
+  // Education view removed - education is now managed separately
 
   if (isLoading) {
     return (
@@ -342,7 +261,6 @@ export default function ExperienceManagement({
               { key: 'all', label: 'All' },
               { key: 'tools', label: 'Tools' },
               { key: 'industries', label: 'Industries' },
-              { key: 'education', label: 'Education' },
             ].map(({ key, label }) => (
               <button
                 key={key}
@@ -363,7 +281,6 @@ export default function ExperienceManagement({
         {viewMode === 'all' && renderAllView()}
         {viewMode === 'tools' && renderToolsView()}
         {viewMode === 'industries' && renderIndustriesView()}
-        {viewMode === 'education' && renderEducationView()}
       </div>
     </section>
   );
