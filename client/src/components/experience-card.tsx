@@ -18,9 +18,10 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/experiences/${id}`);
+      await apiRequest('DELETE', `/api/admin/experiences/${id}`);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/experiences'] });
       queryClient.invalidateQueries({ queryKey: ['/api/experiences'] });
       onRefetch();
       toast({

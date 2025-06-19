@@ -74,7 +74,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
 
   const mutation = useMutation({
     mutationFn: async (data: InsertExperience) => {
-      const url = isEditing ? `/api/experiences/${experience.id}` : '/api/experiences';
+      const url = isEditing ? `/api/admin/experiences/${experience.id}` : '/api/admin/experiences';
       const method = isEditing ? 'PUT' : 'POST';
       const response = await apiRequest(method, url, data);
       return response.json();
