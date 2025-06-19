@@ -84,9 +84,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Admin Setup
 
-Default admin credentials created:
+Admin credentials:
 - Username: admin
-- Password: admin123
+- Password: L])j4eh010ml~R.!CTRQ
 - Access via: `/admin` route
 
 ## Changelog
