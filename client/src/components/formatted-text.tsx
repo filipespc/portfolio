@@ -32,16 +32,26 @@ export default function FormattedText({ text, className = "" }: FormattedTextPro
       {content.map((item, index) => {
         if (item.type === 'list' && Array.isArray(item.content)) {
           return (
-            <ul key={index} className="list-disc list-inside mb-4 space-y-1">
-              {item.content.map((listItem: any, listIndex: number) => (
-                <li 
-                  key={listIndex} 
-                  className={`${listItem.level > 0 ? `ml-${listItem.level * 4}` : ''}`}
-                >
-                  {Array.isArray(listItem.text) ? renderInlineMarkdown(listItem.text) : listItem.text}
-                </li>
-              ))}
-            </ul>
+            <div key={index} className="mb-4">
+              {item.content.map((listItem: any, listIndex: number) => {
+                const indentStyle = {
+                  marginLeft: `${listItem.level * 24}px`
+                };
+                
+                return (
+                  <div 
+                    key={listIndex} 
+                    className="flex items-start mb-1"
+                    style={indentStyle}
+                  >
+                    <span className="mr-2">•</span>
+                    <span>
+                      {Array.isArray(listItem.text) ? renderInlineMarkdown(listItem.text) : listItem.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           );
         } else if (item.type === 'paragraph') {
           return (
