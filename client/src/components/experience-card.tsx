@@ -117,13 +117,13 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
             <h4 className="font-semibold mb-3">Education Acquired</h4>
             <div className="flex flex-wrap gap-2">
               {education.map((edu, index) => (
-                <div key={index} className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm flex flex-col">
+                <div key={index} className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-2 text-sm">
                   {edu.link ? (
                     <a
                       href={edu.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-sollo-gold/80 transition-colors flex items-center gap-1 mb-1"
+                      className="hover:text-sollo-gold/80 transition-colors flex items-center gap-1"
                     >
                       <span>{edu.name}</span>
                       <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,12 +131,12 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
                       </svg>
                     </a>
                   ) : (
-                    <span className="mb-1">{edu.name}</span>
+                    <div>{edu.name}</div>
                   )}
                   {edu.date && (
-                    <span className="text-xs opacity-70">
+                    <div className="text-xs opacity-70 mt-1">
                       {edu.date}
-                    </span>
+                    </div>
                   )}
                 </div>
               ))}
