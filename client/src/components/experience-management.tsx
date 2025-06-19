@@ -259,7 +259,7 @@ export default function ExperienceManagement({
                       <p className="text-sm text-sollo-red font-medium">{exp.company}</p>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob)}
+                      {formatDateRange(exp.startDate, exp.endDate, exp.isCurrentJob || false)}
                     </span>
                   </div>
                 </div>

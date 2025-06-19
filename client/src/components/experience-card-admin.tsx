@@ -43,7 +43,7 @@ export default function ExperienceCardAdmin({
               <p className="text-sollo-red font-medium mb-1">{experience.company}</p>
               <p className="text-sollo-gold font-medium mb-1">{experience.industry}</p>
               <p className="text-sm text-gray-600">
-                {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob)}
+                {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob || false)}
               </p>
             </div>
             

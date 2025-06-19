@@ -49,7 +49,7 @@ export const experiences = pgTable("experiences", {
   industry: text("industry").notNull(),
   startDate: text("start_date").notNull(), // Format: YYYY-MM
   endDate: text("end_date"), // Format: YYYY-MM, null if current
-  isCurrentJob: boolean("is_current_job").default(false),
+  isCurrentJob: boolean("is_current_job").default(false).notNull(),
   description: text("description").notNull(),
   accomplishments: text("accomplishments").notNull(),
   tools: text("tools").array().default([]), // JSON array of tool objects {name: string, usage: string}
