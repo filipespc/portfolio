@@ -1,0 +1,234 @@
+[
+  {
+    "Job Title": "Senior Product Manager",
+    "Start and End dates of experience": "Aug 2023 - Present",
+    "Industry": "Legaltech",
+    "Job description and main accomplishments": "As a Senior Product Manager at Jusbrasil, the role involves using data for strategic decisions and product innovation. This includes a focus on advanced data analysis and predictive modeling to improve product intelligence and user experience. The role also entails collaborating with the product management team to align data-driven insights with business objectives and leading initiatives that use machine learning for better legal data processing and analysis.",
+    "Main tools used": [
+      {
+        "tool": "Data Analysis and Predictive Modeling",
+        "description": "Used to enhance product intelligence and user experience."
+      },
+      {
+        "tool": "Machine Learning",
+        "description": "Harnessed for improved legal data processing and analysis."
+      }
+    ]
+  },
+  {
+    "Job Title": "Product Manager",
+    "Start and End dates of experience": "Feb 2023 - Aug 2023",
+    "Industry": "Legaltech",
+    "Job description and main accomplishments": "At Jusbrasil, this role involved leading the development and enhancement of the lawsuit data collection platform. Key achievements include drastically optimizing collection process times, reducing the P90 from 440 to 50 seconds, and cutting the rate of uncollected lawsuits from 14% to 7%. A proof of concept was developed that narrowed the ratio of redundant to useful data collections from 19:1 to 7:1, which is projected to decrease data collection inefficiency by 2.5 times. Other accomplishments include implementing observability tools, creating a clear product vision, and performing data analyses to inform product strategy.",
+    "Main tools used": [
+      {
+        "tool": "Observability Tools",
+        "description": "Implemented within the platform for targeted identification and remediation of issues."
+      },
+      {
+        "tool": "Data Analysis",
+        "description": "Independently performed to inform product strategy and drive innovation."
+      }
+    ]
+  },
+  {
+    "Job Title": "Product Manager",
+    "Start and End dates of experience": "Mar 2021 - Jan 2023",
+    "Industry": "Startup",
+    "Job description and main accomplishments": "While at Origem, the role involved defining product development cycles and testing protocols for new features in an agile startup environment. A significant contribution was to the launch of Brazil's first battery swap station, coordinating with software, firmware, and hardware teams. The team's focus was shifted from backlog-driven tasks to a product-oriented workflow. Additional responsibilities included performing complex data analysis, creating dashboards, leading the Key Account Management function, supporting sales, and developing a Python library for dynamometer testing of motorcycles.",
+    "Main tools used": [
+      {
+        "tool": "Data Analysis and Dashboards",
+        "description": "Used to inform about product performance and usage metrics."
+      },
+      {
+        "tool": "Python",
+        "description": "A library was developed for dynamometer testing of motorcycles to standardize performance tests."
+      }
+    ]
+  },
+  {
+    "Job Title": "Staff Data Scientist",
+    "Start and End dates of experience": "Mar 2020 - Jan 2021",
+    "Industry": "Fintech",
+    "Job description and main accomplishments": "At Nubank, the daily work involved programming in Scala, Spark, and Python within Kubeflow, Databricks, and IntelliJ IDEA environments. All code was versioned with GIT and integrated with CircleCI and Bors for Continuous Integration/Deployment. The role included making improvements to Credit Risk models and limit increase policies, and leading a team focused on the continuous improvement of the Squad by mitigating risks and enhancing tools and processes.",
+    "Main tools used": [
+      {
+        "tool": "Scala, Spark, and Python",
+        "description": "Used for daily programming tasks."
+      },
+      {
+        "tool": "Kubeflow, Databricks, and IntelliJ IDEA",
+        "description": "The environments used for development."
+      },
+      {
+        "tool": "GIT, CircleCI, and Bors",
+        "description": "Utilized for code versioning and enabling Continuous Integration/Deployment."
+      }
+    ]
+  },
+  {
+    "Job Title": "Senior Data Scientist",
+    "Start and End dates of experience": "Sep 2019 - Feb 2020",
+    "Industry": "Banking",
+    "Job description and main accomplishments": "At Itaú Unibanco, this position was responsible for translating business needs into actions such as creating machine learning models, performing statistical and descriptive analysis, and conducting AB testing. The role also involved evolving the Agile Methodology to improve team efficiency and focus. A key responsibility was creating and maintaining a specialized data layer (datamart) to enable data scientists, analysts, and business teams to save time on data acquisition and processing, which facilitated the use of data in building models and performing quick analysis.",
+    "Main tools used": [
+      {
+        "tool": "Machine Learning Models",
+        "description": "Created to address business needs."
+      },
+      {
+        "tool": "Statistical and Descriptive Analysis",
+        "description": "Performed as part of the role's responsibilities."
+      },
+      {
+        "tool": "AB Testing",
+        "description": "Conducted to evaluate changes."
+      }
+    ]
+  },
+  {
+    "Job Title": "Data Scientist",
+    "Start and End dates of experience": "Jul 2018 - Aug 2019",
+    "Industry": "Banking",
+    "Job description and main accomplishments": "Initially at Itaú Unibanco, the work involved credit card risk analysis for small and medium-sized companies, with the main contribution being the creation of a data quality layer to prevent issues in the companies' credit scores. Later, the role shifted to a team responsible for Digital Payments and Credit Card, working with teams like Digital Wallets, Card on File, and Paypal to help them understand potential consumers. Accomplishments include the data quality layer preventing monthly data quality issues from affecting credit scores and the design of a propensity model that reduced customer acquisition costs by about 50%.",
+    "Main tools used": [
+      {
+        "tool": "Propensity Model",
+        "description": "Designed to cut the cost of customer acquisition."
+      }
+    ]
+  },
+  {
+    "Job Title": "Data Scientist Pleno",
+    "Start and End dates of experience": "Jan 2018 - Jun 2018",
+    "Industry": "Big Data",
+    "Job description and main accomplishments": "At Big Data Brasil, the role was as one of the Data Scientists for Optimarc, a product that uses historical data to suggest how to split a company's media and trade investments to improve metrics like sales or visitor numbers. The main contribution was conceptualizing and building a pipeline in Python to ingest data monthly, which cut the time required for data ingestion and model improvement from about two weeks to two hours.",
+    "Main tools used": [
+      {
+        "tool": "Python",
+        "description": "Used to build a pipeline to ingest data monthly."
+      }
+    ]
+  },
+  {
+    "Job Title": "Quality Assurance and Control Manager",
+    "Start and End dates of experience": "Aug 2016 - Aug 2017",
+    "Industry": "Technology",
+    "Job description and main accomplishments": "At Avixy Tecnologia, this individual was responsible for creating the Quality Assurance area from scratch. As Quality Assurance manager, the primary responsibility was to ensure products were free of bugs before mass production by extensively testing mechanics, hardware, and firmware. As Quality Control manager, the focus was on ensuring no problems with the products being produced through tests on raw materials and manufactured products. Key achievements include preventing over 50 bugs from being released and enabling the Supply Chain team to find new suppliers with the knowledge that they would be properly tested.",
+    "Main tools used": [
+      {
+        "tool": "Mechanical, Hardware, and Firmware Testing",
+        "description": "Used extensively to ensure products were bug-free before mass production."
+      },
+      {
+        "tool": "Tests on Raw Material and Manufactured Products",
+        "description": "Performed to ensure quality control."
+      }
+    ]
+  },
+  {
+    "Job Title": "Co-Founder",
+    "Start and End dates of experience": "Oct 2011 - Aug 2016",
+    "Industry": "Music Equipment",
+    "Job description and main accomplishments": "As a Co-Founder of Sollo Amps, the role initially involved working in nearly every area of the company, including R&D, Production Management, Accounting, Marketing, Sales, Administrative, HR, Fund-raising, and Strategic Planning. Over time, the role specialized in Sales, Marketing, and Strategic Planning, while still supporting other areas. It is believed that the company is among the top 5 sellers of guitar tube amplifiers in Brazil, and the brand is respected for its commitment to quality.",
+    "Main tools used": "Not specified in the document."
+  },
+  {
+    "Job Title": "Business Consultant",
+    "Start and End dates of experience": "Jun 2015 - Jul 2016",
+    "Industry": "Information Technology",
+    "Job description and main accomplishments": "At EITI - Empreendimentos Inovadores em Tecnologia da Informação, VELUM, the role involved helping with the decision-making process, particularly regarding product development direction, target audience, public approach, and team effort direction. This also included interviewing people from the target audience, helping with government grant project submissions, and supporting product development.",
+    "Main tools used": "Not specified in the document."
+  },
+  {
+    "Job Title": "Engineering Project Manager",
+    "Start and End dates of experience": "Apr 2014 - Jun 2015",
+    "Industry": "Information Technology",
+    "Job description and main accomplishments": "As the team leader of Project Engineering at Wise Informática Ltda., this individual was responsible for the hardware, firmware, and embedded software teams. Responsibilities included prioritizing tasks, ensuring teamwork and information sharing, preventing engineers from getting stuck on tasks, and coming up with creative solutions for technical challenges. The role also involved implementing the Agile Methodology Scrum, acting as Scrum Master, and working on circuit, board, and firmware design. Achievements include a new main product board layout that led to significant noise reduction, correction of an Operational Amplifier circuit's instability, a significant increase in analog circuit time response, and the substitution of a serial ADC IC with a parallel one. An ADC reading routine was written in assembler that was 1000x more efficient, which along with the previous achievements, improved product performance from 18dB to 30dB.",
+    "Main tools used": [
+      {
+        "tool": "Agile Methodology Scrum",
+        "description": "Implemented to manage the team's work."
+      },
+      {
+        "tool": "Assembler",
+        "description": "Used to write a 1000x more efficient ADC reading routine."
+      }
+    ]
+  },
+  {
+    "Job Title": "Hardware Specialist",
+    "Start and End dates of experience": "Apr 2013 - Jun 2014",
+    "Industry": "Telecommunications",
+    "Job description and main accomplishments": "At Autotrac Comércio e Telecomunicações S.A., the responsibility was to review critical projects and design some projects. In this role, this person helped in the final phase before the release of an important project that saved costs for Autotrac. The new product had a cost of about 60% of the previous version with double the capacity. They also worked on the layout of a board that replaced an older version, saving about 50% of the cost.",
+    "Main tools used": "Not specified in the document."
+  },
+  {
+    "Job Title": "Electronics Team Leader",
+    "Start and End dates of experience": "Jul 2011 - Jan 2013",
+    "Industry": "Information Technology",
+    "Job description and main accomplishments": "At EITI - Empreendimentos Inovadores em Tecnologia da Informação, VELUM, this individual was the first person hired for the role and was responsible for hiring other team members and developing products from scratch. They led the team in a development of products that shared the same board design, including a Data Collecting Device for Temperature using a 1-Wire Temperature sensor network and ZigBee communication, a Data Collecting Device for LED using an optocoupler and ZigBee communication, and a Coordinator that received data and transmitted it to a computer via a USB-emulated RS232.",
+    "Main tools used": [
+      {
+        "tool": "1-Wire Temperature sensor network and ZigBee",
+        "description": "Implemented in the Data Collecting Device for Temperature."
+      },
+      {
+        "tool": "Optocoupler and ZigBee",
+        "description": "Used in the Data Collecting Device for LED."
+      },
+      {
+        "tool": "USB-emulated RS232",
+        "description": "Used by the Coordinator to transmit data to a computer."
+      }
+    ]
+  },
+  {
+    "Job Title": "Hardware Engineering Coordinator",
+    "Start and End dates of experience": "May 2010 - Nov 2011",
+    "Industry": "Telecommunications",
+    "Job description and main accomplishments": "As the hardware team leader at Autotrac Comércio e Telecomunicações S.A., this person was responsible for the success of projects, handling both technical questions and schedule management using MS Project. They also worked on the most difficult technical problems and interfaced with the Contract Manufacturer for New Product Introduction (NPI). Projects included Switching Power Supplies, Microcontrollers, Microprocessors with RAM and FLASH memories, various communication protocols (RS232, RS485, CAN), GPS and GPRS modules, and high-current switches. Achievements include delivering cheaper and more reliable new product versions, getting products approved by Anatel, and designing Quality Management documents for the area.",
+    "Main tools used": [
+      {
+        "tool": "MS Project",
+        "description": "Used for schedule management."
+      }
+    ]
+  },
+  {
+    "Job Title": "Hardware Engineer",
+    "Start and End dates of experience": "Jan 2009 - Apr 2010",
+    "Industry": "Telecommunications",
+    "Job description and main accomplishments": "As a hardware engineer at Autotrac Comércio e Telecomunicações S.A., the work involved hardware design and testing for both existing and new projects. These projects included Switching Power Supplies, Microcontrollers, Microprocessors with RAM and FLASH memories, various communication protocols, GPS and GPRS modules, and high-current switches. Achievements include delivering new product versions that were cheaper and more reliable, and getting products approved by Anatel.",
+    "Main tools used": "Not specified in the document."
+  },
+  {
+    "Job Title": "Electronics Engineer",
+    "Start and End dates of experience": "Mar 2008 - Dec 2008",
+    "Industry": "Technology",
+    "Job description and main accomplishments": "At Z Tecnologia, the focus was mainly on Hardware and Firmware designs for projects, which also required managing the project schedules with MS Project. Key achievements were the successful design of a secure radio implementing voice scrambling on a Digital Signal Processor (DSP) from Texas Instruments and a telephone call history recorder.",
+    "Main tools used": [
+      {
+        "tool": "MS Project",
+        "description": "Used to manage project schedules."
+      },
+      {
+        "tool": "Digital Signal Processor (DSP) from Texas Instruments",
+        "description": "Used to design a secure radio with voice scrambling."
+      }
+    ]
+  },
+  {
+    "Job Title": "Intern",
+    "Start and End dates of experience": "Jul 2007 - Mar 2008",
+    "Industry": "Technology",
+    "Job description and main accomplishments": "As an intern at Z Tecnologia, the work involved what was necessary across hardware, firmware, mechanics, and label design. Achievements include the successful design of a secure radio with voice scrambling on a Digital Signal Processor (DSP) from Texas Instruments and a telephone call history recorder.",
+    "Main tools used": [
+      {
+        "tool": "Digital Signal Processor (DSP) from Texas Instruments",
+        "description": "Used for designing a secure radio with voice scrambling."
+      }
+    ]
+  }
+]
