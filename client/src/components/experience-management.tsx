@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { Experience } from "@shared/schema";
+import { Experience, Profile } from "@shared/schema";
 import { parseTools, formatDateRange } from "@/lib/utils";
 import FormattedText from "./formatted-text";
 import EducationView from "./education-view";
+import { useQuery } from "@tanstack/react-query";
 
 interface ExperienceManagementProps {
   experiences: Experience[];
@@ -22,6 +23,11 @@ export default function ExperienceManagement({
 }: ExperienceManagementProps) {
   const [mainView, setMainView] = useState<MainView>('experiences');
   const [experienceViewMode, setExperienceViewMode] = useState<ExperienceViewMode>('all');
+
+  // Fetch profile data for saved ordering
+  const { data: profile } = useQuery<Profile>({
+    queryKey: ["/api/profile"],
+  });
 
   const processedData = useMemo(() => {
     const toolsMap = new Map<string, { experiences: Experience[], usage: Map<string, string> }>();
@@ -49,14 +55,42 @@ export default function ExperienceManagement({
     return { toolsMap, industriesMap };
   }, [experiences]);
 
-  // Get sorted tools and industries (alphabetical for public view)
+  // Get sorted tools and industries using saved ordering from admin
   const getSortedTools = () => {
     const toolsArray = Array.from(processedData.toolsMap.entries());
+    const savedOrder = profile?.toolsOrder || [];
+    
+    if (savedOrder.length > 0) {
+      // Use admin-configured order
+      const orderedTools = savedOrder
+        .map(toolName => toolsArray.find(([name]) => name === toolName))
+        .filter((item): item is [string, { experiences: Experience[], usage: Map<string, string> }] => item !== undefined);
+      
+      // Add any new tools not in saved order
+      const remainingTools = toolsArray.filter(([name]) => !savedOrder.includes(name));
+      return [...orderedTools, ...remainingTools.sort(([a], [b]) => a.localeCompare(b))];
+    }
+    
+    // Fallback to alphabetical if no saved order
     return toolsArray.sort(([a], [b]) => a.localeCompare(b));
   };
 
   const getSortedIndustries = () => {
     const industriesArray = Array.from(processedData.industriesMap.entries());
+    const savedOrder = profile?.industriesOrder || [];
+    
+    if (savedOrder.length > 0) {
+      // Use admin-configured order
+      const orderedIndustries = savedOrder
+        .map(industryName => industriesArray.find(([name]) => name === industryName))
+        .filter((item): item is [string, Experience[]] => item !== undefined);
+      
+      // Add any new industries not in saved order
+      const remainingIndustries = industriesArray.filter(([name]) => !savedOrder.includes(name));
+      return [...orderedIndustries, ...remainingIndustries.sort(([a], [b]) => a.localeCompare(b))];
+    }
+    
+    // Fallback to alphabetical if no saved order
     return industriesArray.sort(([a], [b]) => a.localeCompare(b));
   };
 

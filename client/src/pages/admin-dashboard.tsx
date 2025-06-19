@@ -173,11 +173,15 @@ export default function AdminDashboard() {
     return { toolsMap, industriesMap };
   }, [experiences]);
 
-  // Initialize order arrays
+  // Initialize order arrays from profile data
   const getToolsList = () => {
     const toolsArray = Array.from(processedData.toolsMap.keys());
     if (toolsOrder.length === 0 && toolsArray.length > 0) {
-      const initialOrder = toolsArray.sort((a, b) => a.localeCompare(b));
+      // Use saved order from profile, fallback to alphabetical
+      const savedOrder = profile?.toolsOrder || [];
+      const initialOrder = savedOrder.length > 0 
+        ? [...savedOrder, ...toolsArray.filter(tool => !savedOrder.includes(tool))]
+        : toolsArray.sort((a, b) => a.localeCompare(b));
       setToolsOrder(initialOrder);
       return initialOrder;
     }
@@ -187,7 +191,11 @@ export default function AdminDashboard() {
   const getIndustriesList = () => {
     const industriesArray = Array.from(processedData.industriesMap.keys());
     if (industriesOrder.length === 0 && industriesArray.length > 0) {
-      const initialOrder = industriesArray.sort((a, b) => a.localeCompare(b));
+      // Use saved order from profile, fallback to alphabetical
+      const savedOrder = profile?.industriesOrder || [];
+      const initialOrder = savedOrder.length > 0 
+        ? [...savedOrder, ...industriesArray.filter(industry => !savedOrder.includes(industry))]
+        : industriesArray.sort((a, b) => a.localeCompare(b));
       setIndustriesOrder(initialOrder);
       return initialOrder;
     }
