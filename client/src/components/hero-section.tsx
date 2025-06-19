@@ -1,0 +1,40 @@
+export default function HeroSection() {
+  return (
+    <section className="pt-28 pb-18 px-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="font-baron text-6xl md:text-8xl lg:text-9xl tracking-wider mb-8 leading-none">
+            YOUR NAME
+          </h1>
+          <div className="w-24 h-1 bg-sollo-gold mx-auto mb-8"></div>
+          <p className="text-xl md:text-2xl text-gray-600 font-light leading-relaxed max-w-3xl mx-auto">
+            Professional with extensive experience in building scalable digital products 
+            and leading cross-functional teams across various industries. Passionate about 
+            creating innovative solutions that drive business growth.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-12 text-center">
+          <div>
+            <div className="text-3xl font-baron text-sollo-red mb-2">
+              <span id="years-experience">0+</span>
+            </div>
+            <p className="text-gray-600">Years Experience</p>
+          </div>
+          <div>
+            <div className="text-3xl font-baron text-sollo-gold mb-2">
+              <span id="projects-count">0+</span>
+            </div>
+            <p className="text-gray-600">Projects Completed</p>
+          </div>
+          <div>
+            <div className="text-3xl font-baron text-sollo-red mb-2">
+              <span id="industries-count">0+</span>
+            </div>
+            <p className="text-gray-600">Industries</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
