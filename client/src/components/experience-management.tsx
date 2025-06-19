@@ -208,28 +208,30 @@ export default function ExperienceManagement({
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
-      {/* Main View Selector */}
-      <div className="flex gap-4 mb-8">
-        <button
-          onClick={() => setMainView('experiences')}
-          className={`px-6 py-3 font-medium transition-colors border ${
-            mainView === 'experiences'
-              ? 'bg-sollo-red text-white border-sollo-red'
-              : 'bg-white text-gray-600 border-gray-200 hover:border-sollo-red hover:text-sollo-red'
-          }`}
-        >
-          Work Experience
-        </button>
-        <button
-          onClick={() => setMainView('education')}
-          className={`px-6 py-3 font-medium transition-colors border ${
-            mainView === 'education'
-              ? 'bg-sollo-red text-white border-sollo-red'
-              : 'bg-white text-gray-600 border-gray-200 hover:border-sollo-red hover:text-sollo-red'
-          }`}
-        >
-          Education
-        </button>
+      {/* Main View Selector - Tab Style */}
+      <div className="mb-8">
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setMainView('experiences')}
+            className={`px-6 py-3 font-medium border-b-2 transition-colors ${
+              mainView === 'experiences'
+                ? 'border-sollo-red text-sollo-red'
+                : 'border-transparent text-gray-500 hover:text-sollo-red hover:border-gray-300'
+            }`}
+          >
+            Work Experience
+          </button>
+          <button
+            onClick={() => setMainView('education')}
+            className={`px-6 py-3 font-medium border-b-2 transition-colors ${
+              mainView === 'education'
+                ? 'border-sollo-red text-sollo-red'
+                : 'border-transparent text-gray-500 hover:text-sollo-red hover:border-gray-300'
+            }`}
+          >
+            Education
+          </button>
+        </div>
       </div>
 
       {/* Experience Views */}
