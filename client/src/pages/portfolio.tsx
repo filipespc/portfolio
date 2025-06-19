@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Experience } from "@shared/schema";
 import HeroSection from "@/components/hero-section";
 import ExperienceManagement from "@/components/experience-management";
+import EducationView from "@/components/education-view";
 
 export default function Portfolio() {
   const { data: experiences = [], isLoading, refetch } = useQuery<Experience[]>({
@@ -29,6 +30,9 @@ export default function Portfolio() {
         onEditExperience={() => {}} // No edit functionality on public page
         onRefetch={refetch}
       />
+
+      {/* Education Section */}
+      <EducationView />
     </div>
   );
 }

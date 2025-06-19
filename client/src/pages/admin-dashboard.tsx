@@ -451,6 +451,15 @@ export default function AdminDashboard() {
           onSave={handleExperienceChange}
         />
       )}
+
+      {/* Education Modal */}
+      {showEducationModal && (
+        <EducationModal
+          education={editingEducation}
+          onClose={handleEducationModalClose}
+          onSave={handleEducationChange}
+        />
+      )}
     </div>
   );
 }
