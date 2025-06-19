@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertExperienceSchema, insertProfileSchema, insertAdminUserSchema } from "@shared/schema";
+import { insertExperienceSchema, insertProfileSchema, insertAdminUserSchema, insertEducationSchema } from "@shared/schema";
 import { z } from "zod";
 import { getSession, requireAuth, hashPassword, verifyPassword } from "./auth";
 
@@ -194,19 +194,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reorder experiences
-  app.put("/api/admin/experiences/reorder", requireAuth, async (req, res) => {
+  // Education routes
+  app.get("/api/education", async (req, res) => {
     try {
-      const { experienceIds } = req.body;
-      
-      if (!Array.isArray(experienceIds) || experienceIds.some(id => typeof id !== 'number')) {
-        return res.status(400).json({ message: "Invalid experience IDs array" });
+      const educationList = await storage.getAllEducation();
+      res.json(educationList);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch education" });
+    }
+  });
+
+  app.post("/api/admin/education", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertEducationSchema.parse(req.body);
+      const education = await storage.createEducation(validatedData);
+      res.status(201).json(education);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to create education" });
+    }
+  });
+
+  app.put("/api/admin/education/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid education ID" });
       }
       
-      await storage.reorderExperiences(experienceIds);
-      res.json({ message: "Experiences reordered successfully" });
+      const validatedData = insertEducationSchema.partial().parse(req.body);
+      const education = await storage.updateEducation(id, validatedData);
+      
+      if (!education) {
+        return res.status(404).json({ message: "Education not found" });
+      }
+      
+      res.json(education);
     } catch (error) {
-      res.status(500).json({ message: "Failed to reorder experiences" });
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to update education" });
+    }
+  });
+
+  app.delete("/api/admin/education/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid education ID" });
+      }
+      
+      const deleted = await storage.deleteEducation(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Education not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete education" });
+    }
+  });
+
+  app.put("/api/admin/education/reorder", requireAuth, async (req, res) => {
+    try {
+      const { educationIds } = req.body;
+      
+      if (!Array.isArray(educationIds) || educationIds.some(id => typeof id !== 'number')) {
+        return res.status(400).json({ message: "Invalid education IDs array" });
+      }
+      
+      await storage.reorderEducation(educationIds);
+      res.json({ message: "Education reordered successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reorder education" });
     }
   });
 
