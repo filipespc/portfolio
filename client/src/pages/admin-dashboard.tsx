@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Experience, Profile } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,10 +21,21 @@ export default function AdminDashboard() {
   });
 
   const [profileForm, setProfileForm] = useState({
-    name: profile?.name || "",
-    briefIntro: profile?.briefIntro || "",
-    educationCategories: profile?.educationCategories || [],
+    name: "",
+    briefIntro: "",
+    educationCategories: [],
   });
+
+  // Update form when profile data loads
+  useEffect(() => {
+    if (profile) {
+      setProfileForm({
+        name: profile.name || "",
+        briefIntro: profile.briefIntro || "",
+        educationCategories: profile.educationCategories || [],
+      });
+    }
+  }, [profile]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<Profile>) => {
