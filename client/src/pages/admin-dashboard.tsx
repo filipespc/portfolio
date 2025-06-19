@@ -213,10 +213,11 @@ export default function AdminDashboard() {
         description: "Tools order saved successfully",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Tools order save error:", error);
       toast({
         title: "Error",
-        description: "Failed to save tools order",
+        description: `Failed to save tools order: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     },

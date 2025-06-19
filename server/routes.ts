@@ -112,6 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!Array.isArray(toolsOrder)) {
         return res.status(400).json({ error: "toolsOrder must be an array" });
       }
+      
       const updatedProfile = await storage.updateProfile({ toolsOrder });
       res.json({ success: true, toolsOrder: updatedProfile.toolsOrder });
     } catch (error) {
@@ -127,6 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!Array.isArray(industriesOrder)) {
         return res.status(400).json({ error: "industriesOrder must be an array" });
       }
+      
       const updatedProfile = await storage.updateProfile({ industriesOrder });
       res.json({ success: true, industriesOrder: updatedProfile.industriesOrder });
     } catch (error) {
