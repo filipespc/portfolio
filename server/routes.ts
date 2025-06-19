@@ -194,6 +194,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reorder experiences
+  app.put("/api/admin/experiences/reorder", requireAuth, async (req, res) => {
+    try {
+      const { experienceIds } = req.body;
+      
+      if (!Array.isArray(experienceIds) || experienceIds.some(id => typeof id !== 'number')) {
+        return res.status(400).json({ message: "Invalid experience IDs array" });
+      }
+      
+      await storage.reorderExperiences(experienceIds);
+      res.json({ message: "Experiences reordered successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reorder experiences" });
+    }
+  });
+
   app.get("/api/admin/experiences", requireAuth, async (req, res) => {
     try {
       const experiences = await storage.getAllExperiences();

@@ -18,6 +18,7 @@ export interface IStorage {
   createExperience(experience: InsertExperience): Promise<Experience>;
   updateExperience(id: number, experience: Partial<InsertExperience>): Promise<Experience | undefined>;
   deleteExperience(id: number): Promise<boolean>;
+  reorderExperiences(experienceIds: number[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -75,11 +76,8 @@ export class DatabaseStorage implements IStorage {
 
   // Experience methods
   async getAllExperiences(): Promise<Experience[]> {
-    const experienceList = await db.select().from(experiences);
-    return experienceList.sort((a, b) => {
-      // Sort by start date descending (most recent first)
-      return b.startDate.localeCompare(a.startDate);
-    });
+    const experienceList = await db.select().from(experiences).orderBy(experiences.sortOrder, experiences.startDate);
+    return experienceList;
   }
 
   async getExperience(id: number): Promise<Experience | undefined> {
@@ -107,6 +105,16 @@ export class DatabaseStorage implements IStorage {
   async deleteExperience(id: number): Promise<boolean> {
     const result = await db.delete(experiences).where(eq(experiences.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  async reorderExperiences(experienceIds: number[]): Promise<void> {
+    // Update sort order for each experience
+    for (let i = 0; i < experienceIds.length; i++) {
+      await db
+        .update(experiences)
+        .set({ sortOrder: i })
+        .where(eq(experiences.id, experienceIds[i]));
+    }
   }
 }
 
