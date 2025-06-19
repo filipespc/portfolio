@@ -7,6 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 import ExperienceModal from "@/components/experience-modal";
 import ExperienceCard from "@/components/experience-card";
 
+interface ProfileFormData {
+  name: string;
+  briefIntro: string;
+  educationCategories: string[];
+}
+
 export default function AdminDashboard() {
   const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
@@ -20,7 +26,7 @@ export default function AdminDashboard() {
     queryKey: ["/api/profile"],
   });
 
-  const [profileForm, setProfileForm] = useState({
+  const [profileForm, setProfileForm] = useState<ProfileFormData>({
     name: "",
     briefIntro: "",
     educationCategories: [],
