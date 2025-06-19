@@ -56,6 +56,7 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
       <div className="flex justify-between items-start mb-6">
         <div>
           <h3 className="font-baron text-2xl tracking-wide mb-2">{experience.jobTitle.toUpperCase()}</h3>
+          <p className="text-sollo-red font-medium text-lg">{experience.company}</p>
           <p className="text-sollo-gold font-medium">{experience.industry}</p>
           <p className="text-gray-500">
             {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob || false)}

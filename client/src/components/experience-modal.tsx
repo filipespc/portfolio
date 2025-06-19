@@ -46,6 +46,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
 
   const [formData, setFormData] = useState({
     jobTitle: '',
+    company: '',
     industry: '',
     startDate: '',
     endDate: '',

@@ -45,6 +45,7 @@ export const profile = pgTable("profile", {
 export const experiences = pgTable("experiences", {
   id: serial("id").primaryKey(),
   jobTitle: text("job_title").notNull(),
+  company: text("company").notNull(),
   industry: text("industry").notNull(),
   startDate: text("start_date").notNull(), // Format: YYYY-MM
   endDate: text("end_date"), // Format: YYYY-MM, null if current
