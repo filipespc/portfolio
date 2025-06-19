@@ -117,12 +117,27 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
               <h4 className="font-semibold mb-3">Education Acquired</h4>
               <div className="flex flex-wrap gap-2">
                 {education.map((edu, index) => (
-                  <span 
-                    key={index} 
-                    className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm"
-                  >
-                    {edu.name}
-                  </span>
+                  edu.link ? (
+                    <a
+                      key={index}
+                      href={edu.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm hover:bg-opacity-30 transition-colors flex items-center gap-1"
+                    >
+                      {edu.name}
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <span 
+                      key={index} 
+                      className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm"
+                    >
+                      {edu.name}
+                    </span>
+                  )
                 ))}
               </div>
             </>

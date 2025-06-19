@@ -19,6 +19,7 @@ interface ToolEntry {
 interface EducationEntry {
   name: string;
   category: string;
+  link?: string;
 }
 
 export default function ExperienceModal({ experience, onClose, onSave }: ExperienceModalProps) {
@@ -56,7 +57,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
   });
 
   const [tools, setTools] = useState<ToolEntry[]>([{ name: '', usage: '' }]);
-  const [education, setEducation] = useState<EducationEntry[]>([{ name: '', category: '' }]);
+  const [education, setEducation] = useState<EducationEntry[]>([{ name: '', category: '', link: '' }]);
 
   useEffect(() => {
     if (experience) {
@@ -144,7 +145,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
   };
 
   const addEducation = () => {
-    setEducation([...education, { name: '', category: '' }]);
+    setEducation([...education, { name: '', category: '', link: '' }]);
   };
 
   const removeEducation = (index: number) => {
@@ -312,27 +313,36 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
           
           <div>
             <label className="block text-sm font-medium mb-2">Education Acquired</label>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {education.map((edu, index) => (
-                <div key={index} className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Education/Course name"
-                    value={edu.name}
-                    onChange={(e) => updateEducation(index, 'name', e.target.value)}
-                    className="p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
-                  />
-                  <div className="flex gap-2">
+                <div key={index} className="space-y-3 p-4 border border-gray-100 rounded">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Education/Course name"
+                      value={edu.name}
+                      onChange={(e) => updateEducation(index, 'name', e.target.value)}
+                      className="p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                    />
                     <select
                       value={edu.category}
                       onChange={(e) => updateEducation(index, 'category', e.target.value)}
-                      className="flex-1 p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                      className="p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
                     >
                       <option value="">Select category</option>
                       {educationCategories.map((category: string) => (
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="Certificate link (optional)"
+                      value={edu.link || ''}
+                      onChange={(e) => updateEducation(index, 'link', e.target.value)}
+                      className="flex-1 p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
+                    />
                     {education.length > 1 && (
                       <button
                         type="button"

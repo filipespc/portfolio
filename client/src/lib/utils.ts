@@ -37,10 +37,15 @@ export function parseTools(tools: string[]): Array<{name: string, usage: string}
 }
 
 // Parse education array
-export function parseEducation(education: string[]): Array<{name: string, category: string}> {
+export function parseEducation(education: string[]): Array<{name: string, category: string, link?: string}> {
   return education.map(edu => {
     try {
-      return JSON.parse(edu);
+      const parsed = JSON.parse(edu);
+      return {
+        name: parsed.name || edu,
+        category: parsed.category || 'Other',
+        link: parsed.link || undefined
+      };
     } catch {
       return { name: edu, category: 'Other' };
     }
@@ -53,7 +58,7 @@ export function stringifyTools(tools: Array<{name: string, usage: string}>): str
 }
 
 // Stringify education for storage
-export function stringifyEducation(education: Array<{name: string, category: string}>): string[] {
+export function stringifyEducation(education: Array<{name: string, category: string, link?: string}>): string[] {
   return education.map(edu => JSON.stringify(edu));
 }
 
