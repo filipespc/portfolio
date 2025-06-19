@@ -6,6 +6,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import ExperienceModal from "@/components/experience-modal";
 import ExperienceCard from "@/components/experience-card";
+import SortableExperienceList from "@/components/sortable-experience-list";
 
 interface ProfileFormData {
   name: string;
@@ -104,6 +105,32 @@ export default function AdminDashboard() {
   const handleExperienceChange = () => {
     refetchExperiences();
     handleExperienceModalClose();
+  };
+
+  const deleteExperienceMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest(`/api/admin/experiences/${id}`, "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/experiences"] });
+      toast({
+        title: "Success",
+        description: "Experience deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete experience",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteExperience = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this experience?")) {
+      deleteExperienceMutation.mutate(id);
+    }
   };
 
   const addEducationCategory = () => {
@@ -253,22 +280,11 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <div className="space-y-8">
-              {experiences.map(experience => (
-                <ExperienceCard
-                  key={experience.id}
-                  experience={experience}
-                  onEdit={() => handleEditExperience(experience)}
-                  onRefetch={refetchExperiences}
-                />
-              ))}
-              {experiences.length === 0 && (
-                <div className="text-center py-16 bg-gray-50">
-                  <p className="text-gray-600 text-lg">No experiences added yet.</p>
-                  <p className="text-gray-500 text-sm mt-2">Click "Add Experience" to get started.</p>
-                </div>
-              )}
-            </div>
+            <SortableExperienceList
+              experiences={experiences}
+              onEditExperience={handleEditExperience}
+              onDeleteExperience={handleDeleteExperience}
+            />
           </div>
         )}
       </div>
