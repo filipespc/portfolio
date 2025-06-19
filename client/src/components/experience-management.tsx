@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { Experience } from "@shared/schema";
-import { parseTools, parseEducation } from "@/lib/utils";
-import ExperienceCard from "./experience-card";
+import { parseTools, parseEducation, formatDateRange } from "@/lib/utils";
 
 interface ExperienceManagementProps {
   experiences: Experience[];

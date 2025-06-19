@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Experience, InsertExperience } from "@shared/schema";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Experience, InsertExperience, Profile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { parseTools, parseEducation, stringifyTools, stringifyEducation } from "@/lib/utils";
@@ -21,23 +21,28 @@ interface EducationEntry {
   category: string;
 }
 
-const educationCategories = [
-  'Product Management',
-  'Data Analytics',
-  'Machine Learning',
-  'AI',
-  'Software Development',
-  'Business Strategy',
-  'UX/UI Design',
-  'Marketing',
-  'Finance',
-  'Other'
-];
-
 export default function ExperienceModal({ experience, onClose, onSave }: ExperienceModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isEditing = !!experience;
+
+  // Get education categories from profile
+  const { data: profile } = useQuery<Profile>({
+    queryKey: ["/api/profile"],
+  });
+
+  const educationCategories = profile?.educationCategories || [
+    'Product Management',
+    'Data Analytics',
+    'Machine Learning',
+    'AI',
+    'Software Development',
+    'Business Strategy',
+    'UX/UI Design',
+    'Marketing',
+    'Finance',
+    'Other'
+  ];
 
   const [formData, setFormData] = useState({
     jobTitle: '',
@@ -80,6 +85,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
       return response.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/experiences'] });
       queryClient.invalidateQueries({ queryKey: ['/api/experiences'] });
       toast({
         title: "Success",
@@ -308,7 +314,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
                       className="flex-1 p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
                     >
                       <option value="">Select category</option>
-                      {educationCategories.map(category => (
+                      {educationCategories.map((category: string) => (
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>

@@ -58,7 +58,7 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
           <h3 className="font-baron text-2xl tracking-wide mb-2">{experience.jobTitle.toUpperCase()}</h3>
           <p className="text-sollo-gold font-medium">{experience.industry}</p>
           <p className="text-gray-500">
-            {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob)}
+            {formatDateRange(experience.startDate, experience.endDate, experience.isCurrentJob || false)}
           </p>
         </div>
         <div className={`transition-opacity flex gap-2 ${showActions ? 'opacity-100' : 'opacity-0'}`}>

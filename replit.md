@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack portfolio application built with React, Express, and PostgreSQL. The application allows users to manage and showcase professional experiences with a clean, modern interface. It features a monorepo structure with shared schema definitions and separate client/server directories.
+This is a full-stack portfolio application built with React, Express, and PostgreSQL. The application provides a public portfolio view and a secure admin area for content management. It features a clean, minimalist design with comprehensive experience management capabilities and multiple view modes.
 
 ## System Architecture
 
@@ -14,85 +14,84 @@ This is a full-stack portfolio application built with React, Express, and Postgr
 
 ### Technology Stack
 - **Frontend**: React 18, TypeScript, Vite, TailwindCSS, shadcn/ui components
-- **Backend**: Express.js, TypeScript, Drizzle ORM
-- **Database**: PostgreSQL (configured for Neon serverless)
+- **Backend**: Express.js, TypeScript, Drizzle ORM, bcrypt for authentication
+- **Database**: PostgreSQL (Neon serverless) with session storage
+- **Authentication**: Express sessions with PostgreSQL store
 - **State Management**: TanStack Query for server state
 - **Routing**: Wouter for client-side routing
-- **Styling**: TailwindCSS with custom design system
+- **Styling**: TailwindCSS with Sollo brand colors (red/gold accents)
 
-## Key Components
+## Key Features
 
-### Frontend Architecture
-- **Component Structure**: Uses shadcn/ui component library for consistent UI
-- **State Management**: TanStack Query handles all server state and caching
-- **Routing**: Simple client-side routing with Wouter
-- **Form Handling**: React Hook Form with Zod validation
-- **Styling**: Custom design system with portfolio-specific color palette
+### Public Portfolio
+- **Hero Section**: Dynamic name and introduction from profile settings
+- **Experience Views**: Multiple viewing modes (All, Tools, Industries, Education)
+- **Clean Design**: Minimalist white-based design following Sollo brand guidelines
+- **No Edit Controls**: Public view is read-only for visitors
 
-### Backend Architecture
-- **API Design**: RESTful API with Express.js
-- **Database Layer**: Drizzle ORM with PostgreSQL
-- **Storage Interface**: Abstracted storage layer with in-memory fallback
-- **Error Handling**: Centralized error handling middleware
-- **Request Logging**: Custom middleware for API request logging
+### Admin Dashboard
+- **Secure Authentication**: Username/password login with session management
+- **Profile Management**: Edit name, brief introduction, and education categories
+- **Experience CRUD**: Full create, read, update, delete operations for experiences
+- **Dynamic Categories**: Customizable education categories that update form options
 
 ### Database Schema
-Two main entities:
-- **Users**: Basic user management (username, password)
+Main entities:
+- **Admin Users**: Secure admin authentication (username, hashed password)
+- **Profile**: Site configuration (name, introduction, education categories)
 - **Experiences**: Professional experience records with rich metadata
-  - Job details (title, industry, dates, current job flag)
-  - Descriptions and accomplishments
-  - Tools/technologies used (stored as JSON array)
-  - Education/certifications (stored as JSON array)
+- **Sessions**: Secure session storage for authentication
 
-## Data Flow
+## Authentication & Security
 
-1. **Client Requests**: React components use TanStack Query hooks
-2. **API Layer**: Express routes handle CRUD operations
-3. **Validation**: Zod schemas validate input data
-4. **Database**: Drizzle ORM manages PostgreSQL interactions
-5. **Response**: JSON responses with proper error handling
+### Admin Access
+- **Login Route**: `/admin/login` for admin authentication
+- **Dashboard Route**: `/admin` redirects to login if not authenticated
+- **Session-Based**: Secure sessions stored in PostgreSQL
+- **Password Hashing**: bcrypt for secure password storage
 
-## External Dependencies
+### API Security
+- **Public Routes**: Experience viewing and profile reading
+- **Protected Routes**: All admin operations require authentication
+- **Route Separation**: Admin routes prefixed with `/api/admin/`
 
-### Database
-- **Neon Serverless PostgreSQL**: Cloud PostgreSQL database
-- **Connection**: Uses `@neondatabase/serverless` driver
-- **Migration**: Drizzle Kit for schema migrations
+## Design System
 
-### UI Libraries
-- **Radix UI**: Headless UI components for accessibility
-- **Lucide React**: Icon library
-- **TailwindCSS**: Utility-first CSS framework
+### Visual Guidelines
+- **Base**: Predominantly white background with generous spacing
+- **Typography**: Baron Neue for headings, Inter for body text
+- **Colors**: Sollo red (R 217 G 39 B 45) and gold (R 223 G 138 B 0) as accents
+- **Minimalism**: Clean lines, subtle textures, no heavy borders or shadows
+- **Responsive**: Mobile-first design with proper breakpoints
 
-### Development Tools
-- **Vite**: Frontend build tool with HMR
-- **ESBuild**: Server bundling for production
-- **TypeScript**: Type safety across the stack
+## Data Management
 
-## Deployment Strategy
+### Experience Structure
+- Job title, industry, start/end dates
+- Current job flag for ongoing positions
+- Rich descriptions and accomplishments
+- Tools with usage descriptions (JSON storage)
+- Education with categorization (JSON storage)
 
-### Development
-- **Dev Server**: Vite dev server with Express API proxy
-- **Hot Reload**: Full-stack hot reloading in development
-- **Database**: Connects to remote PostgreSQL instance
-
-### Production
-- **Build Process**: Vite builds frontend, ESBuild bundles server
-- **Static Assets**: Frontend builds to `dist/public`
-- **Server**: Node.js serves both API and static files
-- **Database**: Production PostgreSQL connection via environment variables
-
-### Replit Configuration
-- **Modules**: Node.js 20, Web, PostgreSQL 16
-- **Ports**: Server runs on port 5000, mapped to external port 80
-- **Environment**: Configured for Replit's autoscale deployment
+### Profile Configuration
+- Editable site name and introduction
+- Customizable education categories
+- Dynamic form updates based on admin settings
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
+## Admin Setup
+
+Default admin credentials created:
+- Username: admin
+- Password: admin123
+- Access via: `/admin` route
+
 ## Changelog
 
-Changelog:
-- June 19, 2025. Initial setup
+- June 19, 2025: Initial portfolio setup with experience management
+- June 19, 2025: Added admin authentication system with PostgreSQL database
+- June 19, 2025: Implemented profile management and dynamic education categories
+- June 19, 2025: Separated public and admin functionality, removed edit controls from public view
