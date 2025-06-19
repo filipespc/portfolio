@@ -95,3 +95,4 @@ Default admin credentials created:
 - June 19, 2025: Added admin authentication system with PostgreSQL database
 - June 19, 2025: Implemented profile management and dynamic education categories
 - June 19, 2025: Separated public and admin functionality, removed edit controls from public view
+- June 19, 2025: Added company field to experience records with proper database migration and UI updates
