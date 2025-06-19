@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Experience } from "@shared/schema";
 import { parseTools, formatDateRange } from "@/lib/utils";
 import FormattedText from "./formatted-text";
+import EducationView from "./education-view";
 import {
   DndContext,
   closestCenter,
@@ -401,12 +402,8 @@ export default function ExperienceManagement({
         </>
       )}
 
-      {/* Education View - This will be handled by the EducationView component */}
-      {mainView === 'education' && (
-        <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">Education section is displayed separately below.</p>
-        </div>
-      )}
+      {/* Education View */}
+      {mainView === 'education' && <EducationView />}
     </div>
   );
 }
