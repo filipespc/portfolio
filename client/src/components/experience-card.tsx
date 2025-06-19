@@ -86,7 +86,64 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
         </div>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="space-y-6">
+        {/* Tools & Technologies - Full width at top */}
+        {tools.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3">Tools & Technologies</h4>
+            <div className="flex flex-wrap gap-2">
+              {tools.map((tool, index) => (
+                <span 
+                  key={index} 
+                  className="bg-white px-3 py-1 text-sm border border-gray-200 cursor-help relative group"
+                  title={tool.usage || tool.name}
+                >
+                  {tool.name}
+                  {tool.usage && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                      {tool.usage}
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                    </div>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Education - Full width */}
+        {education.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3">Education Acquired</h4>
+            <div className="flex flex-wrap gap-2">
+              {education.map((edu, index) => (
+                edu.link ? (
+                  <a
+                    key={index}
+                    href={edu.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm hover:bg-opacity-30 transition-colors flex items-center gap-1"
+                  >
+                    {edu.name}
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                ) : (
+                  <span 
+                    key={index} 
+                    className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm"
+                  >
+                    {edu.name}
+                  </span>
+                )
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Accomplishments and Description - Full width */}
         <div>
           <h4 className="font-semibold mb-3">Key Accomplishments</h4>
           <FormattedText text={experience.accomplishments} className="text-gray-700 leading-relaxed" />
@@ -94,52 +151,6 @@ export default function ExperienceCard({ experience, onEdit, onRefetch }: Experi
             <>
               <h4 className="font-semibold mb-3 mt-6">Job Description</h4>
               <FormattedText text={experience.description} className="text-gray-700 leading-relaxed" />
-            </>
-          )}
-        </div>
-        
-        <div>
-          {tools.length > 0 && (
-            <>
-              <h4 className="font-semibold mb-3">Tools & Technologies</h4>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {tools.map((tool, index) => (
-                  <span key={index} className="bg-white px-3 py-1 text-sm border border-gray-200">
-                    {tool.name}
-                  </span>
-                ))}
-              </div>
-            </>
-          )}
-          
-          {education.length > 0 && (
-            <>
-              <h4 className="font-semibold mb-3">Education Acquired</h4>
-              <div className="flex flex-wrap gap-2">
-                {education.map((edu, index) => (
-                  edu.link ? (
-                    <a
-                      key={index}
-                      href={edu.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm hover:bg-opacity-30 transition-colors flex items-center gap-1"
-                    >
-                      {edu.name}
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  ) : (
-                    <span 
-                      key={index} 
-                      className="bg-sollo-gold bg-opacity-20 text-sollo-gold px-3 py-1 text-sm"
-                    >
-                      {edu.name}
-                    </span>
-                  )
-                ))}
-              </div>
             </>
           )}
         </div>
