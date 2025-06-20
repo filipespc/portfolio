@@ -40,7 +40,7 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ username, password }: { username: string; password: string }) => {
-      const response = await apiRequest('POST', '/api/admin/login', { username, password });
+      const response = await apiRequest('/api/admin/login', 'POST', { username, password });
       return response.json();
     },
     onSuccess: () => {
@@ -50,7 +50,7 @@ export function useAuth() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest('POST', '/api/admin/logout');
+      await apiRequest('/api/admin/logout', 'POST');
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/admin/me"], null);

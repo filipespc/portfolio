@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Experience, InsertExperience, Profile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { parseTools, parseEducation, stringifyTools, stringifyEducation } from "@/lib/utils";
+import { parseTools, stringifyTools } from "@/lib/utils";
 
 interface ExperienceModalProps {
   experience?: Experience | null;
@@ -85,7 +85,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
     mutationFn: async (data: InsertExperience) => {
       const url = isEditing ? `/api/admin/experiences/${experience.id}` : '/api/admin/experiences';
       const method = isEditing ? 'PUT' : 'POST';
-      const response = await apiRequest(method, url, data);
+      const response = await apiRequest(url, method, data);
       return response.json();
     },
     onSuccess: () => {
