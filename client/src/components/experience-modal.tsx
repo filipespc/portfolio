@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { Experience, InsertExperience, Profile } from "@shared/schema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Experience, InsertExperience } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { parseTools, stringifyTools } from "@/lib/utils";
@@ -16,35 +16,10 @@ interface ToolEntry {
   usage: string;
 }
 
-interface EducationEntry {
-  name: string;
-  category: string;
-  link?: string;
-  date?: string;
-}
-
 export default function ExperienceModal({ experience, onClose, onSave }: ExperienceModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isEditing = !!experience;
-
-  // Get education categories from profile
-  const { data: profile } = useQuery<Profile>({
-    queryKey: ["/api/profile"],
-  });
-
-  const educationCategories = profile?.educationCategories || [
-    'Product Management',
-    'Data Analytics',
-    'Machine Learning',
-    'AI',
-    'Software Development',
-    'Business Strategy',
-    'UX/UI Design',
-    'Marketing',
-    'Finance',
-    'Other'
-  ];
 
   const [formData, setFormData] = useState({
     jobTitle: '',
@@ -58,7 +33,6 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
   });
 
   const [tools, setTools] = useState<ToolEntry[]>([{ name: '', usage: '' }]);
-  const [education, setEducation] = useState<EducationEntry[]>([{ name: '', category: '', link: '' }]);
 
   useEffect(() => {
     if (experience) {
@@ -75,9 +49,6 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
 
       const parsedTools = parseTools(experience.tools || []);
       setTools(parsedTools.length > 0 ? parsedTools : [{ name: '', usage: '' }]);
-
-      const parsedEducation = parseEducation(experience.education || []);
-      setEducation(parsedEducation.length > 0 ? parsedEducation : [{ name: '', category: '' }]);
     }
   }, [experience]);
 
@@ -97,10 +68,11 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
       });
       onSave();
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Experience save error:", error);
       toast({
         title: "Error",
-        description: `Failed to ${isEditing ? 'update' : 'create'} experience`,
+        description: `Failed to ${isEditing ? 'update' : 'create'} experience: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     },
@@ -109,7 +81,7 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.jobTitle.trim() || !formData.company.trim() || !formData.industry.trim() || !formData.accomplishments.trim()) {
+    if (!formData.jobTitle || !formData.company || !formData.industry || !formData.startDate || !formData.description) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -119,13 +91,11 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
     }
 
     const filteredTools = tools.filter(tool => tool.name.trim());
-    const filteredEducation = education.filter(edu => edu.name.trim() && edu.category);
 
     const data: InsertExperience = {
       ...formData,
       endDate: formData.isCurrentJob ? null : formData.endDate || null,
       tools: stringifyTools(filteredTools),
-      education: stringifyEducation(filteredEducation),
     };
 
     mutation.mutate(data);
@@ -145,43 +115,34 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
     setTools(updated);
   };
 
-  const addEducation = () => {
-    setEducation([...education, { name: '', category: '', link: '' }]);
-  };
-
-  const removeEducation = (index: number) => {
-    setEducation(education.filter((_, i) => i !== index));
-  };
-
-  const updateEducation = (index: number, field: keyof EducationEntry, value: string) => {
-    const updated = [...education];
-    updated[index] = { ...updated[index], [field]: value };
-    setEducation(updated);
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto p-8">
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-baron text-2xl tracking-wide">
-            {isEditing ? 'EDIT EXPERIENCE' : 'ADD EXPERIENCE'}
+            {isEditing ? "EDIT EXPERIENCE" : "ADD EXPERIENCE"}
           </h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Job Title *</label>
               <input
                 type="text"
                 value={formData.jobTitle}
-                onChange={(e) => setFormData({...formData, jobTitle: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                 className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                placeholder="e.g., Senior Product Manager"
                 required
               />
             </div>
@@ -190,33 +151,34 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
               <input
                 type="text"
                 value={formData.company}
-                onChange={(e) => setFormData({...formData, company: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                placeholder="e.g., Tech Solutions Inc."
                 required
               />
             </div>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Industry *</label>
-              <input
-                type="text"
-                value={formData.industry}
-                onChange={(e) => setFormData({...formData, industry: e.target.value})}
-                className="w-full p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
-                required
-              />
-            </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Industry *</label>
+            <input
+              type="text"
+              value={formData.industry}
+              onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+              className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+              placeholder="e.g., Technology, Healthcare, Finance"
+              required
+            />
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-6">
+
+          {/* Date Information */}
+          <div className="grid md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Start Date *</label>
               <input
                 type="month"
                 value={formData.startDate}
-                onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
                 required
               />
@@ -226,70 +188,83 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
               <input
                 type="month"
                 value={formData.endDate}
-                onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
                 disabled={formData.isCurrentJob}
-                className="w-full p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none disabled:bg-gray-100"
               />
-              <label className="flex items-center mt-2">
+            </div>
+            <div className="flex items-center">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formData.isCurrentJob}
-                  onChange={(e) => setFormData({...formData, isCurrentJob: e.target.checked, endDate: e.target.checked ? '' : formData.endDate})}
-                  className="mr-2"
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    isCurrentJob: e.target.checked,
+                    endDate: e.target.checked ? '' : formData.endDate
+                  })}
+                  className="w-4 h-4 text-sollo-red"
                 />
-                Currently working here
+                <span className="text-sm">Current Position</span>
               </label>
             </div>
           </div>
-          
+
+          {/* Description */}
           <div>
-            <label className="block text-sm font-medium mb-2">Job Description</label>
+            <label className="block text-sm font-medium mb-2">Job Description *</label>
             <textarea
-              rows={3}
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={4}
               className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
               placeholder="Describe your role and responsibilities..."
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2">Key Accomplishments *</label>
-            <textarea
-              rows={4}
-              value={formData.accomplishments}
-              onChange={(e) => setFormData({...formData, accomplishments: e.target.value})}
-              className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
-              placeholder="Describe your main achievements and impact..."
               required
             />
           </div>
-          
+
+          {/* Accomplishments */}
           <div>
-            <label className="block text-sm font-medium mb-2">Tools Used</label>
-            <div className="space-y-3">
+            <label className="block text-sm font-medium mb-2">Key Accomplishments</label>
+            <textarea
+              value={formData.accomplishments}
+              onChange={(e) => setFormData({ ...formData, accomplishments: e.target.value })}
+              rows={4}
+              className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+              placeholder="List your key achievements and accomplishments..."
+            />
+          </div>
+
+          {/* Tools */}
+          <div>
+            <label className="block text-sm font-medium mb-4">Tools & Technologies</label>
+            <div className="space-y-4">
               {tools.map((tool, index) => (
-                <div key={index} className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Tool name"
-                    value={tool.name}
-                    onChange={(e) => updateTool(index, 'name', e.target.value)}
-                    className="p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
-                  />
-                  <div className="flex gap-2">
+                <div key={index} className="flex gap-4 items-start">
+                  <div className="flex-1">
                     <input
                       type="text"
-                      placeholder="How it was used"
+                      placeholder="Tool/Technology name"
+                      value={tool.name}
+                      onChange={(e) => updateTool(index, 'name', e.target.value)}
+                      className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="How you used it"
                       value={tool.usage}
                       onChange={(e) => updateTool(index, 'usage', e.target.value)}
-                      className="flex-1 p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
+                      className="w-full p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
                     />
+                  </div>
+                  <div className="flex items-center">
                     {tools.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeTool(index)}
-                        className="text-sollo-red hover:text-sollo-red/80 px-3"
+                        className="text-sollo-red hover:text-sollo-red/80 p-2"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -303,97 +278,30 @@ export default function ExperienceModal({ experience, onClose, onSave }: Experie
             <button
               type="button"
               onClick={addTool}
-              className="mt-2 text-sollo-gold hover:text-sollo-gold/80 text-sm flex items-center gap-1"
+              className="mt-3 text-sollo-red hover:text-sollo-red/80 text-sm font-medium flex items-center"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
               Add Tool
             </button>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2">Education Acquired</label>
-            <div className="space-y-4">
-              {education.map((edu, index) => (
-                <div key={index} className="space-y-3 p-4 border border-gray-100 rounded">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Education/Course name"
-                      value={edu.name}
-                      onChange={(e) => updateEducation(index, 'name', e.target.value)}
-                      className="p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
-                    />
-                    <select
-                      value={edu.category}
-                      onChange={(e) => updateEducation(index, 'category', e.target.value)}
-                      className="p-3 border border-gray-200 focus:border-sollo-red focus:outline-none"
-                    >
-                      <option value="">Select category</option>
-                      {educationCategories.map((category: string) => (
-                        <option key={category} value={category}>{category}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <input
-                      type="url"
-                      placeholder="Certificate link (optional)"
-                      value={edu.link || ''}
-                      onChange={(e) => updateEducation(index, 'link', e.target.value)}
-                      className="p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Date (e.g., 2023, Jan 2023, 2023-01)"
-                      value={edu.date || ''}
-                      onChange={(e) => updateEducation(index, 'date', e.target.value)}
-                      className="p-3 border border-gray-200 focus:border-sollo-gold focus:outline-none"
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    {education.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeEducation(index)}
-                        className="text-sollo-red hover:text-sollo-red/80 px-3"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={addEducation}
-              className="mt-2 text-sollo-red hover:text-sollo-red/80 text-sm flex items-center gap-1"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Add Education
-            </button>
-          </div>
-          
-          <div className="flex gap-4 pt-6">
-            <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="bg-sollo-red text-white px-8 py-3 font-medium hover:bg-sollo-red/90 transition-colors disabled:opacity-50"
-            >
-              {mutation.isPending ? 'Saving...' : 'Save Experience'}
-            </button>
+
+          {/* Actions */}
+          <div className="flex justify-end space-x-4 pt-6 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="border border-gray-200 px-8 py-3 font-medium hover:border-gray-300 transition-colors"
+              className="px-6 py-2 text-gray-600 hover:text-gray-800"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={mutation.isPending}
+              className="px-6 py-2 bg-sollo-red text-white hover:bg-sollo-red/90 disabled:opacity-50"
+            >
+              {mutation.isPending ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
             </button>
           </div>
         </form>
