@@ -37,6 +37,8 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
   const [isPublished, setIsPublished] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   
   const editorRef = useRef<EditorJS | null>(null);
   const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -117,6 +119,60 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
     setTitle(value);
     if (!caseStudy) { // Only auto-generate slug for new case studies
       setSlug(generateSlug(value));
+    }
+  };
+
+  const handleFeaturedImageUpload = async (file: File) => {
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setFeaturedImage(result.file.url);
+        setFeaturedImageFile(null);
+        toast({
+          title: "Success",
+          description: "Featured image uploaded successfully",
+        });
+      } else {
+        throw new Error(result.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Featured image upload error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload featured image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        setFeaturedImageFile(file);
+        handleFeaturedImageUpload(file);
+      } else {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -252,13 +308,49 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
           </div>
 
           <div>
-            <Label htmlFor="featuredImage">Featured Image URL</Label>
-            <Input
-              id="featuredImage"
-              value={featuredImage}
-              onChange={(e) => setFeaturedImage(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-            />
+            <Label>Featured Image</Label>
+            <div className="space-y-3">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="featured-image-upload"
+                    disabled={isUploadingImage}
+                  />
+                  <label
+                    htmlFor="featured-image-upload"
+                    className={`inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer ${
+                      isUploadingImage ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {isUploadingImage ? 'Uploading...' : 'Upload Image'}
+                  </label>
+                </div>
+                <span className="text-gray-500">or</span>
+                <div className="flex-1">
+                  <Input
+                    value={featuredImage}
+                    onChange={(e) => setFeaturedImage(e.target.value)}
+                    placeholder="Enter image URL"
+                  />
+                </div>
+              </div>
+              {featuredImage && (
+                <div className="mt-3">
+                  <img
+                    src={featuredImage}
+                    alt="Featured image preview"
+                    className="w-32 h-24 object-cover rounded-lg border"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div>
