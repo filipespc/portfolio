@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Experience, Profile, Education } from "@shared/schema";
+import { Experience, Profile, Education, CaseStudy } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +9,8 @@ import ExperienceModal from "@/components/experience-modal";
 import ExperienceCard from "@/components/experience-card";
 import SortableExperienceList from "@/components/sortable-experience-list";
 import EducationModal from "@/components/education-modal";
+import CaseStudyModal from "@/components/case-study-modal";
+import CaseStudyCardAdmin from "@/components/case-study-card-admin";
 import {
   DndContext,
   closestCenter,
