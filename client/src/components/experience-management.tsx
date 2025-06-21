@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Experience, Profile, CaseStudy } from "@shared/schema";
 import { parseTools, formatDateRange } from "@/lib/utils";
 import FormattedText from "./formatted-text";
 import EducationView from "./education-view";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 interface ExperienceManagementProps {
   experiences: Experience[];
@@ -33,7 +33,7 @@ function PlaygroundView() {
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {caseStudies.map((caseStudy) => (
-          <Link key={caseStudy.id} href={`/playground/${caseStudy.slug}`}>
+          <Link key={caseStudy.id} href={`/case-study/${caseStudy.slug}`}>
             <div className="bg-white border border-gray-200 hover:border-sollo-red transition-colors cursor-pointer group">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
@@ -80,8 +80,20 @@ export default function ExperienceManagement({
   onEditExperience,
   onRefetch,
 }: ExperienceManagementProps) {
+  const [location] = useLocation();
   const [mainView, setMainView] = useState<MainView>('experiences');
   const [experienceViewMode, setExperienceViewMode] = useState<ExperienceViewMode>('all');
+
+  // Handle URL parameters for tab selection
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'playground') {
+      setMainView('playground');
+      // Clear the URL parameter
+      window.history.replaceState({}, '', '/');
+    }
+  }, [location]);
 
   // Fetch profile data for saved ordering
   const { data: profile } = useQuery<Profile>({

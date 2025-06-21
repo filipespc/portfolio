@@ -25,8 +25,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Portfolio} />
-      <Route path="/playground" component={Playground} />
-      <Route path="/playground/:slug" component={CaseStudyPage} />
+      <Route path="/case-study/:slug" component={CaseStudyPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin">
         {isAuthenticated ? <AdminDashboard /> : <AdminLogin />}

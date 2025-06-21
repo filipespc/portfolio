@@ -125,7 +125,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
 
   const updateMutation = useMutation({
     mutationFn: async (data: InsertCaseStudy) => {
-      return await apiRequest(`/api/admin/case-studies/${caseStudy!.id}`, "PATCH", data);
+      return await apiRequest(`/api/admin/case-studies/${caseStudy!.id}`, "PUT", data);
     },
     onSuccess: () => {
       toast({ title: "Case study updated successfully" });

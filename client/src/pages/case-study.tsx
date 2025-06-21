@@ -84,7 +84,7 @@ function EditorRenderer({ content }: { content: string }) {
 }
 
 export default function CaseStudyPage() {
-  const [match, params] = useRoute("/playground/:slug");
+  const [match, params] = useRoute("/case-study/:slug");
   const slug = params?.slug;
 
   const { data: caseStudy, isLoading, error } = useQuery<CaseStudy>({
@@ -117,9 +117,9 @@ export default function CaseStudyPage() {
         <div className="text-center">
           <h1 className="text-2xl font-baron tracking-wide mb-4">Case Study Not Found</h1>
           <p className="text-gray-600 mb-8">The case study you're looking for doesn't exist or has been removed.</p>
-          <Link href="/playground">
+          <Link href="/?tab=playground">
             <button className="bg-sollo-red text-white px-6 py-3 hover:bg-sollo-red/90 transition-colors">
-              Back to Playground
+              Back to Main Page
             </button>
           </Link>
         </div>
@@ -134,8 +134,8 @@ export default function CaseStudyPage() {
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <div className="mb-6">
-            <Link href="/playground" className="text-sollo-red hover:text-sollo-red/80 text-sm font-medium">
-              ← Back to Playground
+            <Link href="/?tab=playground" className="text-sollo-red hover:text-sollo-red/80 text-sm font-medium">
+              ← Back to Main Page
             </Link>
           </div>
 
