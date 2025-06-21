@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Portfolio from "@/pages/portfolio";
+import Playground from "@/pages/playground";
+import CaseStudyPage from "@/pages/case-study";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import NotFound from "@/pages/not-found";
@@ -23,6 +25,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Portfolio} />
+      <Route path="/playground" component={Playground} />
+      <Route path="/playground/:slug" component={CaseStudyPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin">
         {isAuthenticated ? <AdminDashboard /> : <AdminLogin />}
