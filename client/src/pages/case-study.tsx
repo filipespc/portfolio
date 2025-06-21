@@ -22,7 +22,8 @@ function EditorRenderer({ content }: { content: string }) {
         switch (block.type) {
           case 'header':
             const level = block.data.level || 2;
-            const headerClass = level === 2 ? 'text-2xl font-baron tracking-wide mb-4' : 
+            const headerClass = level === 1 ? 'text-3xl font-baron tracking-wide mb-6' :
+                               level === 2 ? 'text-2xl font-baron tracking-wide mb-4' : 
                                level === 3 ? 'text-xl font-bold mb-3' : 'text-lg font-bold mb-2';
             element.innerHTML = `<h${level} class="${headerClass}">${block.data.text}</h${level}>`;
             break;

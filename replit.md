@@ -140,3 +140,4 @@ All markdown formatting works across:
 - June 21, 2025: Removed fixed header navigation bar for cleaner, more focused portfolio layout
 - June 21, 2025: Fixed case study editing functionality and removed separate Playground page
 - June 21, 2025: Updated case study navigation to integrate with main page tab selection system
+- June 21, 2025: Fixed heading hierarchy in case studies - H1 is now largest, proper size progression through H4

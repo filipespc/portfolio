@@ -49,7 +49,13 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
     const editor = new EditorJS({
       holder: editorContainerRef.current,
       tools: {
-        header: Header as any,
+        header: {
+          class: Header as any,
+          config: {
+            levels: [1, 2, 3, 4],
+            defaultLevel: 2
+          }
+        },
         list: List as any,
         paragraph: Paragraph as any,
         quote: Quote as any,
