@@ -34,14 +34,23 @@ function PlaygroundView() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {caseStudies.map((caseStudy) => (
           <Link key={caseStudy.id} href={`/case-study/${caseStudy.slug}`}>
-            <div className="bg-white border border-gray-200 hover:border-sollo-red transition-colors cursor-pointer group">
+            <div className="bg-white border border-gray-200 hover:border-sollo-red transition-colors cursor-pointer group overflow-hidden rounded-lg">
+              {caseStudy.featuredImage && (
+                <div className="w-full h-48 overflow-hidden">
+                  <img
+                    src={caseStudy.featuredImage}
+                    alt={caseStudy.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-medium text-sollo-red bg-red-50 px-2 py-1">
+                  <span className="text-xs font-medium text-sollo-red bg-red-50 px-2 py-1 rounded">
                     Case Study
                   </span>
                   {caseStudy.isFeatured && (
-                    <span className="text-xs font-medium text-sollo-gold bg-yellow-50 px-2 py-1">
+                    <span className="text-xs font-medium text-sollo-gold bg-yellow-50 px-2 py-1 rounded">
                       Featured
                     </span>
                   )}
