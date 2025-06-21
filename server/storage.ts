@@ -1,4 +1,4 @@
-import { experiences, adminUsers, profile, education, type Experience, type InsertExperience, type AdminUser, type InsertAdminUser, type Profile, type InsertProfile, type Education, type InsertEducation } from "@shared/schema";
+import { experiences, adminUsers, profile, education, caseStudies, type Experience, type InsertExperience, type AdminUser, type InsertAdminUser, type Profile, type InsertProfile, type Education, type InsertEducation, type CaseStudy, type InsertCaseStudy } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
