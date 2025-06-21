@@ -136,3 +136,5 @@ All markdown formatting works across:
 - June 21, 2025: Implemented Playground feature with case studies gallery and Medium-style content rendering using Editor.js
 - June 21, 2025: Added Playground tab at same level as Work Experience and Education tabs in main content area
 - June 21, 2025: Created three sample case studies covering AI/ML, analytics, and UX design work
+- June 21, 2025: Added comprehensive case study management to admin dashboard with create, edit, delete functionality
+- June 21, 2025: Removed fixed header navigation bar for cleaner, more focused portfolio layout

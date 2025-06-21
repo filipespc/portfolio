@@ -14,22 +14,7 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-white font-apercu">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-sm z-50 border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="font-baron text-2xl tracking-wider">FILIPE CARNEIRO</h1>
-            <div className="flex items-center space-x-8">
-              <Link href="/">
-                <span className={`text-sm font-medium transition-colors cursor-pointer ${
-                  location === '/' ? 'text-sollo-red' : 'text-gray-600 hover:text-sollo-red'
-                }`}>
-                  PORTFOLIO
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Section */}
       <HeroSection />
