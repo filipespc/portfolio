@@ -48,7 +48,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/uploads', express.static(uploadsDir));
 
   // Image upload endpoint
-  app.post('/api/upload-image', requireAuth, upload.single('image'), (req, res) => {
+  app.post('/api/upload-image', requireAuth, upload.single('image'), (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ success: 0, message: 'No file uploaded' });
