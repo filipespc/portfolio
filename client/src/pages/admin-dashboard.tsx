@@ -80,7 +80,9 @@ export default function AdminDashboard() {
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
   const [showEducationModal, setShowEducationModal] = useState(false);
   const [editingEducation, setEditingEducation] = useState<Education | null>(null);
-  const [activeTab, setActiveTab] = useState<'profile' | 'experiences' | 'education'>('profile');
+  const [showCaseStudyModal, setShowCaseStudyModal] = useState(false);
+  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null);
+  const [activeTab, setActiveTab] = useState<'profile' | 'experiences' | 'education' | 'case-studies'>('profile');
   const [experienceSubTab, setExperienceSubTab] = useState<'list' | 'tools-order' | 'industries-order'>('list');
   const [toolsOrder, setToolsOrder] = useState<string[]>([]);
   const [industriesOrder, setIndustriesOrder] = useState<string[]>([]);
@@ -146,6 +148,11 @@ export default function AdminDashboard() {
 
   const { data: education = [], refetch: refetchEducation } = useQuery<Education[]>({
     queryKey: ["/api/education"],
+  });
+
+  // Case studies data
+  const { data: caseStudies = [], refetch: refetchCaseStudies } = useQuery<CaseStudy[]>({
+    queryKey: ["/api/admin/case-studies"],
   });
 
   // Process tools and industries data
@@ -378,6 +385,54 @@ export default function AdminDashboard() {
     }
   };
 
+  // Case study handlers
+  const handleAddCaseStudy = () => {
+    setEditingCaseStudy(null);
+    setShowCaseStudyModal(true);
+  };
+
+  const handleEditCaseStudy = (caseStudy: CaseStudy) => {
+    setEditingCaseStudy(caseStudy);
+    setShowCaseStudyModal(true);
+  };
+
+  const handleCaseStudyModalClose = () => {
+    setShowCaseStudyModal(false);
+    setEditingCaseStudy(null);
+  };
+
+  const handleCaseStudyChange = () => {
+    refetchCaseStudies();
+    handleCaseStudyModalClose();
+  };
+
+  const deleteCaseStudyMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest(`/api/admin/case-studies/${id}`, "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/case-studies"] });
+      toast({
+        title: "Success",
+        description: "Case study deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete case study",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteCaseStudy = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this case study?")) {
+      deleteCaseStudyMutation.mutate(id);
+    }
+  };
+
   const addEducationCategory = () => {
     const newCategory = prompt("Enter new education category:");
     if (newCategory && !profileForm.educationCategories.includes(newCategory)) {
@@ -447,6 +502,16 @@ export default function AdminDashboard() {
             }`}
           >
             Manage Education
+          </button>
+          <button
+            onClick={() => setActiveTab('case-studies')}
+            className={`px-6 py-3 font-medium transition-colors border ${
+              activeTab === 'case-studies'
+                ? 'bg-white border-sollo-gold text-sollo-gold'
+                : 'bg-white border-gray-200 hover:border-sollo-gold hover:text-sollo-gold'
+            }`}
+          >
+            Manage Case Studies
           </button>
         </div>
 
@@ -744,6 +809,38 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {/* Case Studies Management Tab */}
+        {activeTab === 'case-studies' && (
+          <div className="bg-gray-50 p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-baron text-xl tracking-wide">MANAGE CASE STUDIES</h2>
+              <button
+                onClick={handleAddCaseStudy}
+                className="bg-sollo-red text-white px-6 py-2 font-medium hover:bg-sollo-red/90 transition-colors"
+              >
+                Add Case Study
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {caseStudies.map((caseStudy) => (
+                <CaseStudyCardAdmin
+                  key={caseStudy.id}
+                  caseStudy={caseStudy}
+                  onEdit={() => handleEditCaseStudy(caseStudy)}
+                  onDelete={() => handleDeleteCaseStudy(caseStudy.id)}
+                />
+              ))}
+              {caseStudies.length === 0 && (
+                <div className="text-center py-16 col-span-2 border-2 border-dashed border-gray-200">
+                  <p className="text-gray-600 text-lg">No case studies added yet.</p>
+                  <p className="text-gray-500 text-sm mt-2">Click "Add Case Study" to get started.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Experience Modal */}
@@ -761,6 +858,15 @@ export default function AdminDashboard() {
           education={editingEducation}
           onClose={handleEducationModalClose}
           onSave={handleEducationChange}
+        />
+      )}
+
+      {/* Case Study Modal */}
+      {showCaseStudyModal && (
+        <CaseStudyModal
+          caseStudy={editingCaseStudy}
+          onClose={handleCaseStudyModalClose}
+          onSave={handleCaseStudyChange}
         />
       )}
     </div>
