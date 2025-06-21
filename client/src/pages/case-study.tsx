@@ -196,7 +196,7 @@ export default function CaseStudyPage() {
       <div className="max-w-4xl mx-auto px-4 py-16 border-t border-gray-100">
         <div className="text-center">
           <h3 className="font-baron text-xl tracking-wide mb-4">Explore More Case Studies</h3>
-          <Link href="/playground">
+          <Link href="/?tab=playground">
             <button className="bg-sollo-red text-white px-6 py-3 hover:bg-sollo-red/90 transition-colors">
               View All Case Studies
             </button>
