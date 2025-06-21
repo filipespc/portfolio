@@ -74,6 +74,40 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
             },
             field: 'image',
             types: 'image/*',
+            additionalRequestHeaders: {
+              'credentials': 'include'
+            },
+            uploader: {
+              uploadByFile: async (file: File) => {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch('/api/upload-image', {
+                  method: 'POST',
+                  body: formData,
+                  credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                  const errorText = await response.text();
+                  console.error('Upload failed:', response.status, errorText);
+                  throw new Error(`Upload failed: ${response.status} ${errorText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Upload result:', result);
+                if (result.success) {
+                  return {
+                    success: 1,
+                    file: {
+                      url: result.file.url,
+                    }
+                  };
+                } else {
+                  throw new Error(result.message || 'Upload failed');
+                }
+              }
+            }
           }
         },
       },
@@ -131,13 +165,17 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       const response = await fetch('/api/upload-image', {
         method: 'POST',
         body: formData,
+        credentials: 'include', // Include session cookies for authentication
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorText = await response.text();
+        console.error('Featured image upload failed:', response.status, errorText);
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('Featured image upload result:', result);
       if (result.success) {
         setFeaturedImage(result.file.url);
         setFeaturedImageFile(null);
@@ -152,7 +190,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       console.error('Featured image upload error:', error);
       toast({
         title: "Error",
-        description: "Failed to upload featured image",
+        description: `Failed to upload featured image: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {
