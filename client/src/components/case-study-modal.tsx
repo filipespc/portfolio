@@ -20,6 +20,7 @@ import Code from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
 import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
+import ImageTool from '@editorjs/image';
 
 interface CaseStudyModalProps {
   caseStudy?: CaseStudy | null;
@@ -63,6 +64,16 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         delimiter: Delimiter as any,
         inlineCode: InlineCode as any,
         marker: Marker as any,
+        image: {
+          class: ImageTool as any,
+          config: {
+            endpoints: {
+              byFile: '/api/upload-image',
+            },
+            field: 'image',
+            types: 'image/*',
+          }
+        },
       },
       data: caseStudy ? JSON.parse(caseStudy.content) : undefined,
       placeholder: 'Write your case study content here...',
