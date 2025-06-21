@@ -20,18 +20,18 @@ export default function Portfolio() {
             <h1 className="font-baron text-2xl tracking-wider">FILIPE CARNEIRO</h1>
             <div className="flex items-center space-x-8">
               <Link href="/">
-                <span className={`text-sm font-medium transition-colors ${
+                <a className={`text-sm font-medium transition-colors cursor-pointer ${
                   location === '/' ? 'text-sollo-red' : 'text-gray-600 hover:text-sollo-red'
                 }`}>
                   EXPERIENCE
-                </span>
+                </a>
               </Link>
               <Link href="/playground">
-                <span className={`text-sm font-medium transition-colors ${
+                <a className={`text-sm font-medium transition-colors cursor-pointer ${
                   location.startsWith('/playground') ? 'text-sollo-red' : 'text-gray-600 hover:text-sollo-red'
                 }`}>
                   PLAYGROUND
-                </span>
+                </a>
               </Link>
             </div>
           </div>
