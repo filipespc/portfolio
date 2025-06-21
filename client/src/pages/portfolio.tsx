@@ -23,14 +23,7 @@ export default function Portfolio() {
                 <span className={`text-sm font-medium transition-colors cursor-pointer ${
                   location === '/' ? 'text-sollo-red' : 'text-gray-600 hover:text-sollo-red'
                 }`}>
-                  EXPERIENCE
-                </span>
-              </Link>
-              <Link href="/playground">
-                <span className={`text-sm font-medium transition-colors cursor-pointer ${
-                  location.startsWith('/playground') ? 'text-sollo-red' : 'text-gray-600 hover:text-sollo-red'
-                }`}>
-                  PLAYGROUND
+                  PORTFOLIO
                 </span>
               </Link>
             </div>

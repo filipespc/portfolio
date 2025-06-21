@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { Experience, Profile } from "@shared/schema";
+import { Experience, Profile, CaseStudy } from "@shared/schema";
 import { parseTools, formatDateRange } from "@/lib/utils";
 import FormattedText from "./formatted-text";
 import EducationView from "./education-view";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 
 interface ExperienceManagementProps {
   experiences: Experience[];
@@ -12,8 +13,66 @@ interface ExperienceManagementProps {
   onRefetch: () => void;
 }
 
-type MainView = 'experiences' | 'education';
+type MainView = 'experiences' | 'education' | 'playground';
 type ExperienceViewMode = 'all' | 'tools' | 'industries';
+
+function PlaygroundView() {
+  const { data: caseStudies = [], isLoading } = useQuery<CaseStudy[]>({
+    queryKey: ["/api/case-studies"],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-16">
+        <div className="text-gray-600">Loading case studies...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {caseStudies.map((caseStudy) => (
+          <Link key={caseStudy.id} href={`/playground/${caseStudy.slug}`}>
+            <div className="bg-white border border-gray-200 hover:border-sollo-red transition-colors cursor-pointer group">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-medium text-sollo-red bg-red-50 px-2 py-1">
+                    Case Study
+                  </span>
+                  {caseStudy.isFeatured && (
+                    <span className="text-xs font-medium text-sollo-gold bg-yellow-50 px-2 py-1">
+                      Featured
+                    </span>
+                  )}
+                </div>
+                
+                <h3 className="font-baron text-lg tracking-wide mb-2 group-hover:text-sollo-red transition-colors">
+                  {caseStudy.title}
+                </h3>
+                
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {caseStudy.description}
+                </p>
+                
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>{caseStudy.createdAt ? new Date(caseStudy.createdAt).toLocaleDateString() : 'Recently'}</span>
+                  <span>5 min read</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      
+      {caseStudies.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-gray-600">No case studies available yet.</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ExperienceManagement({
   experiences,
@@ -265,6 +324,16 @@ export default function ExperienceManagement({
           >
             Education
           </button>
+          <button
+            onClick={() => setMainView('playground')}
+            className={`px-6 py-3 font-medium border-b-2 transition-colors ${
+              mainView === 'playground'
+                ? 'border-sollo-red text-sollo-red'
+                : 'border-transparent text-gray-500 hover:text-sollo-red hover:border-gray-300'
+            }`}
+          >
+            Playground
+          </button>
         </div>
       </div>
 
@@ -314,6 +383,9 @@ export default function ExperienceManagement({
 
       {/* Education View */}
       {mainView === 'education' && <EducationView />}
+
+      {/* Playground View */}
+      {mainView === 'playground' && <PlaygroundView />}
     </div>
   );
 }
