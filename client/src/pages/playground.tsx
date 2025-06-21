@@ -1,16 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
 import { CaseStudy } from "@shared/schema";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Playground() {
+  const [location] = useLocation();
   const { data: caseStudies, isLoading } = useQuery<CaseStudy[]>({
     queryKey: ["/api/case-studies"],
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="max-w-6xl mx-auto px-4 py-16">
+      <div className="min-h-screen bg-white font-apercu">
+        {/* Navigation */}
+        <nav className="fixed top-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-sm z-50 border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <h1 className="font-baron text-2xl tracking-wider">FILIPE CARNEIRO</h1>
+              <div className="flex items-center space-x-8">
+                <Link href="/">
+                  <span className="text-sm font-medium text-gray-600 hover:text-sollo-red transition-colors">
+                    EXPERIENCE
+                  </span>
+                </Link>
+                <Link href="/playground">
+                  <span className="text-sm font-medium text-sollo-red">
+                    PLAYGROUND
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+        
+        <div className="max-w-6xl mx-auto px-4 py-32">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/3 mb-8"></div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -25,9 +47,30 @@ export default function Playground() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-apercu">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-sm z-50 border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="font-baron text-2xl tracking-wider">FILIPE CARNEIRO</h1>
+            <div className="flex items-center space-x-8">
+              <Link href="/">
+                <span className="text-sm font-medium text-gray-600 hover:text-sollo-red transition-colors">
+                  EXPERIENCE
+                </span>
+              </Link>
+              <Link href="/playground">
+                <span className="text-sm font-medium text-sollo-red">
+                  PLAYGROUND
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white border-b border-gray-100 pt-24">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <h1 className="font-baron text-4xl md:text-5xl tracking-wide text-center mb-4">
             PLAYGROUND
