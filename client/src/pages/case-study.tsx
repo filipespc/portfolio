@@ -88,7 +88,7 @@ export default function CaseStudyPage() {
   const slug = params?.slug;
 
   const { data: caseStudy, isLoading, error } = useQuery<CaseStudy>({
-    queryKey: ["/api/case-studies", slug],
+    queryKey: [`/api/case-studies/${slug}`],
     enabled: !!slug,
   });
 
