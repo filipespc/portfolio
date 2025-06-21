@@ -51,10 +51,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       tools: {
         header: Header as any,
         list: List as any,
-        paragraph: {
-          class: Paragraph as any,
-          inlineToolbar: true,
-        },
+        paragraph: Paragraph as any,
         quote: Quote as any,
         code: Code as any,
         delimiter: Delimiter as any,
