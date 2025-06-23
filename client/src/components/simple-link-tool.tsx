@@ -30,6 +30,12 @@ export class SimpleLinkTool {
     (this.button as HTMLButtonElement).type = 'button';
     this.button.innerHTML = '🔗';
     this.button.title = 'Link';
+    this.button.classList.add('ce-inline-tool');
+    this.button.style.border = 'none';
+    this.button.style.background = 'transparent';
+    this.button.style.cursor = 'pointer';
+    this.button.style.padding = '4px 8px';
+    this.button.style.fontSize = '14px';
     
     return this.button;
   }
@@ -45,6 +51,13 @@ export class SimpleLinkTool {
 
   wrap(range: Range) {
     const selectedText = range.extractContents();
+    const textContent = selectedText.textContent;
+    
+    if (!textContent || textContent.trim() === '') {
+      range.insertNode(selectedText);
+      return;
+    }
+
     const url = prompt('Enter URL:');
     
     if (url) {
@@ -52,13 +65,13 @@ export class SimpleLinkTool {
       link.href = url;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
-      link.style.color = 'rgb(217, 39, 45)'; // Sollo red
+      link.style.color = '#d9272d'; // Sollo red
       link.style.textDecoration = 'underline';
       link.appendChild(selectedText);
       
       range.insertNode(link);
       
-      // Update selection
+      // Select the newly created link
       const selection = window.getSelection();
       if (selection) {
         selection.removeAllRanges();
@@ -74,20 +87,20 @@ export class SimpleLinkTool {
   unwrap(range: Range) {
     const link = this.api.selection.findParentTag('A');
     if (link) {
+      const textContent = link.textContent || '';
+      const textNode = document.createTextNode(textContent);
+      
+      if (link.parentNode) {
+        link.parentNode.replaceChild(textNode, link);
+      }
+      
+      // Update selection
       const selection = window.getSelection();
       if (selection) {
         selection.removeAllRanges();
-        
         const newRange = document.createRange();
-        newRange.selectNodeContents(link);
+        newRange.selectNodeContents(textNode);
         selection.addRange(newRange);
-        
-        const textContent = link.textContent;
-        const textNode = document.createTextNode(textContent || '');
-        
-        if (link.parentNode) {
-          link.parentNode.replaceChild(textNode, link);
-        }
       }
     }
   }
@@ -98,6 +111,11 @@ export class SimpleLinkTool {
     
     if (this.button) {
       this.button.classList.toggle('ce-inline-tool--active', this.state);
+      if (this.state) {
+        this.button.style.backgroundColor = '#f0f0f0';
+      } else {
+        this.button.style.backgroundColor = 'transparent';
+      }
     }
   }
 

@@ -76,7 +76,8 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
           class: LinkTool as any,
           config: {
             endpoint: '/api/fetch-url',
-          }
+          },
+          inlineToolbar: true,
         },
         image: {
           class: ImageTool as any,
@@ -632,7 +633,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
             <div className="flex items-center justify-between mb-2">
               <Label>Content *</Label>
               <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
-                To create links: Select text, then use the 🔗 icon in the inline toolbar or press Cmd+L
+                To create links: Type your text, highlight it, then use the 🔗 Link tool from the left sidebar
               </div>
             </div>
             <div className="border border-gray-200 rounded-lg p-4 min-h-[400px]">
