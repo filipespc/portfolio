@@ -23,6 +23,7 @@ import Marker from '@editorjs/marker';
 import ImageTool from '@editorjs/image';
 import LinkTool from '@editorjs/link';
 import { SimpleLinkTool } from './simple-link-tool';
+import { HTMLParagraphTool } from './html-paragraph-tool';
 
 
 interface CaseStudyModalProps {
@@ -57,6 +58,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
 
     const editor = new EditorJS({
       holder: editorContainerRef.current,
+
       tools: {
         header: {
           class: Header as any,
@@ -66,7 +68,12 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
           }
         },
         list: List as any,
-        paragraph: Paragraph as any,
+        paragraph: {
+          class: HTMLParagraphTool as any,
+          config: {
+            preserveBlank: true
+          }
+        },
         quote: Quote as any,
         code: Code as any,
         delimiter: Delimiter as any,
