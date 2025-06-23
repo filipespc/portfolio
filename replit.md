@@ -148,4 +148,4 @@ All markdown formatting works across:
 - June 23, 2025: Implemented individual image resizing controls for Editor.js content images. Each image upload now shows a resize dialog with presets and custom dimensions before uploading
 - June 23, 2025: Fixed ordered list rendering issue where list items were displaying as "[object Object]" - now properly handles both string and object formats from Editor.js
 - June 23, 2025: Added hyperlink functionality to case studies using Editor.js link tool. Users can now create rich link cards that display with hover effects and open in new tabs
-- June 23, 2025: Added inline hyperlink functionality - users can now select text and make it clickable using the link tool in the inline toolbar (appears when text is selected). Links display in Sollo red with hover effects
+- June 23, 2025: Working on inline hyperlink functionality - inline toolbar appears when text is selected with highlighting and code formatting options. For links, users should use the Link tool from the left sidebar to convert text to clickable links
