@@ -22,6 +22,7 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import ImageTool from '@editorjs/image';
 import LinkTool from '@editorjs/link';
+import { InlineLinkTool } from './inline-link-tool';
 
 interface CaseStudyModalProps {
   caseStudy?: CaseStudy | null;
@@ -70,6 +71,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         delimiter: Delimiter as any,
         inlineCode: InlineCode as any,
         marker: Marker as any,
+        link: InlineLinkTool as any,
         linkTool: {
           class: LinkTool as any,
           config: {
@@ -224,7 +226,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       },
       data: caseStudy ? JSON.parse(caseStudy.content) : undefined,
       placeholder: 'Write your case study content here...',
-      inlineToolbar: ['marker', 'inlineCode'],
+      inlineToolbar: ['marker', 'inlineCode', 'link'],
       onReady: () => {
         setIsEditorReady(true);
       }

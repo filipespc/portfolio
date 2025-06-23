@@ -168,6 +168,17 @@
     margin: 0 auto;
   }
 
+  /* Inline links in case study content */
+  .prose a {
+    color: var(--sollo-red) !important;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+  }
+
+  .prose a:hover {
+    opacity: 0.8;
+  }
+
   /* Editor.js container styles */
   .codex-editor__redactor {
     padding-bottom: 200px !important;
