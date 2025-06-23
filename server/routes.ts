@@ -33,6 +33,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // URL fetching endpoint for Editor.js link tool
+  app.get('/api/fetch-url', requireAuth, async (req, res) => {
+    try {
+      const { url } = req.query;
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ success: 0, message: 'URL is required' });
+      }
+
+      // Basic URL validation
+      try {
+        new URL(url);
+      } catch {
+        return res.status(400).json({ success: 0, message: 'Invalid URL' });
+      }
+
+      // For security, we'll return a basic response without actually fetching
+      // This prevents potential SSRF attacks while still enabling the link tool
+      res.json({
+        success: 1,
+        meta: {
+          title: url,
+          description: 'External link',
+          image: {
+            url: ''
+          }
+        }
+      });
+    } catch (error) {
+      console.error('URL fetch error:', error);
+      res.status(500).json({ success: 0, message: 'Failed to fetch URL data' });
+    }
+  });
+
   // Image upload endpoint with Cloudinary and resizing
   app.post('/api/upload-image', requireAuth, upload.single('image'), async (req: any, res) => {
     try {

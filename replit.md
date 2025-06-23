@@ -147,3 +147,4 @@ All markdown formatting works across:
 - June 23, 2025: Added comprehensive image resizing functionality with preset options (Small, Medium, Large, Banner, Square) and custom dimensions. Users can now control both featured images and content images with aspect ratio options
 - June 23, 2025: Implemented individual image resizing controls for Editor.js content images. Each image upload now shows a resize dialog with presets and custom dimensions before uploading
 - June 23, 2025: Fixed ordered list rendering issue where list items were displaying as "[object Object]" - now properly handles both string and object formats from Editor.js
+- June 23, 2025: Added hyperlink functionality to case studies using Editor.js link tool. Users can now create rich link cards that display with hover effects and open in new tabs

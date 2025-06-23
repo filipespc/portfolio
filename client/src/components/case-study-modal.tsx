@@ -21,6 +21,7 @@ import Delimiter from '@editorjs/delimiter';
 import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import ImageTool from '@editorjs/image';
+import LinkTool from '@editorjs/link';
 
 interface CaseStudyModalProps {
   caseStudy?: CaseStudy | null;
@@ -69,6 +70,12 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         delimiter: Delimiter as any,
         inlineCode: InlineCode as any,
         marker: Marker as any,
+        linkTool: {
+          class: LinkTool as any,
+          config: {
+            endpoint: '/api/fetch-url',
+          }
+        },
         image: {
           class: ImageTool as any,
           config: {

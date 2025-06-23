@@ -73,6 +73,24 @@ function EditorRenderer({ content }: { content: string }) {
             `;
             break;
 
+          case 'linkTool':
+            const linkData = block.data;
+            element.innerHTML = `
+              <div class="my-6 p-4 border border-gray-200 rounded-lg hover:border-sollo-red transition-colors">
+                <a href="${linkData.link}" target="_blank" rel="noopener noreferrer" class="block">
+                  <div class="flex items-start gap-3">
+                    ${linkData.meta?.image?.url ? `<img src="${linkData.meta.image.url}" alt="" class="w-16 h-16 object-cover rounded flex-shrink-0" />` : ''}
+                    <div class="flex-1 min-w-0">
+                      <h4 class="font-semibold text-sollo-red mb-1 truncate">${linkData.meta?.title || linkData.link}</h4>
+                      ${linkData.meta?.description ? `<p class="text-sm text-gray-600 mb-2 line-clamp-2">${linkData.meta.description}</p>` : ''}
+                      <p class="text-xs text-gray-500 truncate">${linkData.link}</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            `;
+            break;
+
           default:
             element.innerHTML = `<p class="text-gray-700 leading-relaxed">${block.data.text || ''}</p>`;
         }
