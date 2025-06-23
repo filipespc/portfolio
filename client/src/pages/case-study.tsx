@@ -31,7 +31,16 @@ function EditorRenderer({ content }: { content: string }) {
           case 'paragraph':
             let processedText = block.data.text || '';
             
-            // Convert markdown links first: [text](url) -> <a href="url">text</a>
+            // Convert markdown formatting
+            // Bold: **text** or __text__ -> <strong>text</strong>
+            processedText = processedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            processedText = processedText.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            
+            // Italic: *text* or _text_ -> <em>text</em>
+            processedText = processedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            processedText = processedText.replace(/_(.*?)_/g, '<em>$1</em>');
+            
+            // Convert markdown links: [text](url) -> <a href="url">text</a>
             processedText = processedText.replace(
               /\[([^\]]+)\]\(([^)]+)\)/g,
               '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
@@ -60,6 +69,15 @@ function EditorRenderer({ content }: { content: string }) {
             const items = block.data.items.map((item: any) => {
               // Handle both string and object formats from Editor.js
               let content = typeof item === 'string' ? item : (item.content || item.text || String(item));
+              
+              // Process markdown formatting in list items
+              // Bold: **text** or __text__ -> <strong>text</strong>
+              content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+              content = content.replace(/__(.*?)__/g, '<strong>$1</strong>');
+              
+              // Italic: *text* or _text_ -> <em>text</em>
+              content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+              content = content.replace(/_(.*?)_/g, '<em>$1</em>');
               
               // Process markdown links in list items
               content = content.replace(
