@@ -5,35 +5,24 @@ import { insertExperienceSchema, insertProfileSchema, insertAdminUserSchema, ins
 import { z } from "zod";
 import { getSession, requireAuth, hashPassword, verifyPassword } from "./auth";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import express from "express";
+import { v2 as cloudinary } from "cloudinary";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup session middleware
   app.use(getSession());
 
-  // Create uploads directory if it doesn't exist
-  const uploadsDir = path.join(process.cwd(), 'uploads');
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-
-  // Configure multer for image uploads
-  const storage_multer = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, uploadsDir);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
+  // Configure Cloudinary
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
   });
 
+  // Configure multer for memory storage (for Cloudinary upload)
   const upload = multer({ 
-    storage: storage_multer,
+    storage: multer.memoryStorage(),
     limits: {
-      fileSize: 5 * 1024 * 1024, // 5MB limit
+      fileSize: 10 * 1024 * 1024, // 10MB limit for Cloudinary
     },
     fileFilter: (req, file, cb) => {
       if (file.mimetype.startsWith('image/')) {
@@ -44,26 +33,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve uploaded images statically
-  app.use('/uploads', express.static(uploadsDir));
-
-  // Image upload endpoint
-  app.post('/api/upload-image', requireAuth, upload.single('image'), (req: any, res) => {
+  // Image upload endpoint with Cloudinary
+  app.post('/api/upload-image', requireAuth, upload.single('image'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ success: 0, message: 'No file uploaded' });
       }
 
-      const fileUrl = `/uploads/${req.file.filename}`;
+      // Upload to Cloudinary using buffer
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'image',
+            folder: 'portfolio-case-studies',
+            transformation: [
+              { width: 1200, height: 800, crop: 'limit' },
+              { quality: 'auto' },
+              { fetch_format: 'auto' }
+            ]
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+
+      const cloudinaryResult = result as any;
       
       res.json({
         success: 1,
         file: {
-          url: fileUrl,
+          url: cloudinaryResult.secure_url,
         }
       });
     } catch (error) {
-      console.error('Image upload error:', error);
+      console.error('Cloudinary upload error:', error);
       res.status(500).json({ success: 0, message: 'Upload failed' });
     }
   });

@@ -142,3 +142,4 @@ All markdown formatting works across:
 - June 21, 2025: Updated case study navigation to integrate with main page tab selection system
 - June 21, 2025: Fixed heading hierarchy in case studies - H1 is now largest, proper size progression through H4
 - June 21, 2025: Added comprehensive image support to case studies - users can now upload and embed images directly in case study content using Editor.js image tool with secure file upload handling
+- June 23, 2025: Migrated image storage from local files to Cloudinary cloud storage for better reliability and performance. Images are now stored in the cloud with automatic optimization
