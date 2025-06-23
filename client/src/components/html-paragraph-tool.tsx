@@ -30,23 +30,55 @@ export class HTMLParagraphTool {
     input.contentEditable = 'true';
     input.innerHTML = this.data.text;
     
-    // Style the input
+    // Style the input to match Editor.js default paragraph styling
     Object.assign(input.style, {
       minHeight: '1.2em',
       outline: 'none',
       lineHeight: '1.6',
+      fontSize: '16px',
+      padding: '12px 0',
+      border: 'none',
+      background: 'transparent'
     });
+
+    // Add CSS for links within the editor
+    const style = document.createElement('style');
+    style.textContent = `
+      .ce-paragraph__text a {
+        color: #d9272d;
+        text-decoration: underline;
+      }
+      .ce-paragraph__text a:hover {
+        color: #b01e23;
+      }
+    `;
+    document.head.appendChild(style);
 
     // Handle input events
     input.addEventListener('input', () => {
       this.data.text = input.innerHTML;
     });
 
-    // Handle paste events to preserve formatting
+    // Handle paste events to preserve HTML formatting
     input.addEventListener('paste', (e) => {
       e.preventDefault();
-      const text = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
-      document.execCommand('insertHTML', false, text);
+      const html = e.clipboardData?.getData('text/html');
+      const text = e.clipboardData?.getData('text/plain');
+      
+      if (html) {
+        document.execCommand('insertHTML', false, html);
+      } else if (text) {
+        document.execCommand('insertText', false, text);
+      }
+    });
+
+    // Handle keydown for better UX
+    input.addEventListener('keydown', (e) => {
+      // Allow Enter to create new paragraphs
+      if (e.key === 'Enter' && !e.shiftKey) {
+        // Let Editor.js handle paragraph creation
+        return;
+      }
     });
 
     this.wrapper.appendChild(input);
