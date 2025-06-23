@@ -16,7 +16,8 @@ export class SimpleLinkTool {
       a: {
         href: true,
         target: '_blank',
-        rel: 'noopener noreferrer'
+        rel: 'noopener noreferrer',
+        class: true
       }
     };
   }
@@ -29,13 +30,19 @@ export class SimpleLinkTool {
     this.button = document.createElement('button');
     (this.button as HTMLButtonElement).type = 'button';
     this.button.innerHTML = '🔗';
-    this.button.title = 'Link';
+    this.button.title = 'Convert to Link (Cmd+L)';
     this.button.classList.add('ce-inline-tool');
-    this.button.style.border = 'none';
-    this.button.style.background = 'transparent';
-    this.button.style.cursor = 'pointer';
-    this.button.style.padding = '4px 8px';
-    this.button.style.fontSize = '14px';
+    
+    // Styling to match Editor.js inline toolbar
+    Object.assign(this.button.style, {
+      border: 'none',
+      background: 'transparent',
+      cursor: 'pointer',
+      padding: '8px',
+      fontSize: '16px',
+      borderRadius: '4px',
+      transition: 'background-color 0.15s ease'
+    });
     
     return this.button;
   }
@@ -43,41 +50,52 @@ export class SimpleLinkTool {
   surround(range: Range) {
     if (this.state) {
       this.unwrap(range);
-      return;
+    } else {
+      this.wrap(range);
     }
-
-    this.wrap(range);
   }
 
   wrap(range: Range) {
     const selectedText = range.extractContents();
-    const textContent = selectedText.textContent;
+    const textContent = selectedText.textContent?.trim();
     
-    if (!textContent || textContent.trim() === '') {
+    if (!textContent) {
       range.insertNode(selectedText);
       return;
     }
 
-    const url = prompt('Enter URL:');
+    const url = prompt('Enter URL for "' + textContent + '":');
     
-    if (url) {
+    if (url && url.trim()) {
       const link = document.createElement('a');
-      link.href = url;
+      link.href = url.trim();
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
-      link.style.color = '#d9272d'; // Sollo red
-      link.style.textDecoration = 'underline';
-      link.appendChild(selectedText);
+      link.className = 'inline-link';
       
+      // Apply Sollo red styling
+      Object.assign(link.style, {
+        color: '#d9272d',
+        textDecoration: 'underline',
+        transition: 'color 0.2s ease'
+      });
+      
+      // Add hover effect
+      link.addEventListener('mouseenter', () => {
+        link.style.color = '#b8232a';
+      });
+      
+      link.addEventListener('mouseleave', () => {
+        link.style.color = '#d9272d';
+      });
+      
+      link.appendChild(selectedText);
       range.insertNode(link);
       
-      // Select the newly created link
+      // Clear selection after creating link
       const selection = window.getSelection();
       if (selection) {
         selection.removeAllRanges();
-        const newRange = document.createRange();
-        newRange.selectNodeContents(link);
-        selection.addRange(newRange);
       }
     } else {
       range.insertNode(selectedText);
@@ -86,15 +104,12 @@ export class SimpleLinkTool {
 
   unwrap(range: Range) {
     const link = this.api.selection.findParentTag('A');
-    if (link) {
+    if (link && link.parentNode) {
       const textContent = link.textContent || '';
       const textNode = document.createTextNode(textContent);
+      link.parentNode.replaceChild(textNode, link);
       
-      if (link.parentNode) {
-        link.parentNode.replaceChild(textNode, link);
-      }
-      
-      // Update selection
+      // Select the unwrapped text
       const selection = window.getSelection();
       if (selection) {
         selection.removeAllRanges();
@@ -110,11 +125,14 @@ export class SimpleLinkTool {
     this.state = !!link;
     
     if (this.button) {
-      this.button.classList.toggle('ce-inline-tool--active', this.state);
       if (this.state) {
-        this.button.style.backgroundColor = '#f0f0f0';
+        this.button.classList.add('ce-inline-tool--active');
+        this.button.style.backgroundColor = '#e8f4fd';
+        this.button.title = 'Remove Link (Cmd+L)';
       } else {
+        this.button.classList.remove('ce-inline-tool--active');
         this.button.style.backgroundColor = 'transparent';
+        this.button.title = 'Convert to Link (Cmd+L)';
       }
     }
   }

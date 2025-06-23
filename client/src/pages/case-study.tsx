@@ -29,7 +29,16 @@ function EditorRenderer({ content }: { content: string }) {
             break;
 
           case 'paragraph':
-            element.innerHTML = `<p class="text-gray-700 leading-relaxed">${block.data.text}</p>`;
+            // Process inline links in paragraph text
+            let processedText = block.data.text;
+            if (processedText && processedText.includes('<a ')) {
+              // Ensure links have proper styling
+              processedText = processedText.replace(
+                /<a /g, 
+                '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" target="_blank" rel="noopener noreferrer" '
+              );
+            }
+            element.innerHTML = `<p class="text-gray-700 leading-relaxed">${processedText}</p>`;
             break;
 
           case 'list':

@@ -22,6 +22,7 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import ImageTool from '@editorjs/image';
 import LinkTool from '@editorjs/link';
+import { SimpleLinkTool } from './simple-link-tool';
 
 
 interface CaseStudyModalProps {
@@ -71,6 +72,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         delimiter: Delimiter as any,
         inlineCode: InlineCode as any,
         marker: Marker as any,
+        link: SimpleLinkTool as any,
         linkTool: {
           class: LinkTool as any,
           config: {
@@ -226,11 +228,11 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       },
       data: caseStudy ? JSON.parse(caseStudy.content) : undefined,
       placeholder: 'Write your case study content here...',
-      inlineToolbar: true,
+      inlineToolbar: ['marker', 'inlineCode', 'link'],
       minHeight: 300,
       onReady: () => {
         setIsEditorReady(true);
-        console.log('Editor ready with inline toolbar:', ['marker', 'inlineCode']);
+        console.log('Editor ready with inline toolbar including link tool');
       }
     });
 
@@ -633,7 +635,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
             <div className="flex items-center justify-between mb-2">
               <Label>Content *</Label>
               <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
-                <strong>How to create links:</strong> First type your text normally in a paragraph. Then highlight the text you want to make clickable and use the Link tool from the left sidebar (🔗 icon). This will convert your selected text into a clickable link.
+                <strong>Creating links:</strong> Select any text to see the inline toolbar with 🔗 link icon, or press Cmd+L to convert selected text to clickable links.
               </div>
             </div>
             <div className="border border-gray-200 rounded-lg p-4 min-h-[400px]">
