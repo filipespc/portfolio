@@ -22,7 +22,7 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import ImageTool from '@editorjs/image';
 import LinkTool from '@editorjs/link';
-import { SimpleLinkTool } from './simple-link-tool';
+
 
 interface CaseStudyModalProps {
   caseStudy?: CaseStudy | null;
@@ -71,13 +71,11 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         delimiter: Delimiter as any,
         inlineCode: InlineCode as any,
         marker: Marker as any,
-        link: SimpleLinkTool as any,
         linkTool: {
           class: LinkTool as any,
           config: {
             endpoint: '/api/fetch-url',
-          },
-          inlineToolbar: true,
+          }
         },
         image: {
           class: ImageTool as any,
@@ -227,10 +225,11 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       },
       data: caseStudy ? JSON.parse(caseStudy.content) : undefined,
       placeholder: 'Write your case study content here...',
-      inlineToolbar: ['marker', 'inlineCode', 'link'],
+      inlineToolbar: ['marker', 'inlineCode'],
       minHeight: 300,
       onReady: () => {
         setIsEditorReady(true);
+        console.log('Editor ready with inline toolbar:', ['marker', 'inlineCode']);
       }
     });
 
@@ -633,7 +632,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
             <div className="flex items-center justify-between mb-2">
               <Label>Content *</Label>
               <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
-                To create links: Type your text, highlight it, then use the 🔗 Link tool from the left sidebar
+                For inline text formatting: Select text to see toolbar with highlighting and code options. For links: use the 🔗 Link tool in the left sidebar.
               </div>
             </div>
             <div className="border border-gray-200 rounded-lg p-4 min-h-[400px]">
