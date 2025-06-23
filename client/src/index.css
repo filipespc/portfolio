@@ -191,6 +191,14 @@
     color: #666;
     font-style: italic;
   }
+
+  /* Featured image in case study detail page - respect actual dimensions */
+  .case-study-featured-image {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+    display: inline-block;
+  }
   
   .hover\:bg-sollo-red:hover {
     background-color: hsl(358, 69%, 45%);

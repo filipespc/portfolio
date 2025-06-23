@@ -177,11 +177,11 @@ export default function CaseStudyPage() {
 
       {/* Featured Image */}
       {caseStudy.featuredImage && (
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center">
           <img
             src={caseStudy.featuredImage}
             alt={caseStudy.title}
-            className="w-full rounded-lg shadow-sm"
+            className="case-study-featured-image rounded-lg shadow-sm"
           />
         </div>
       )}
