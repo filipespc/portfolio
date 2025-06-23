@@ -45,6 +45,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const height = parseInt(req.body.height) || 600;
       const maintainAspectRatio = req.body.maintainAspectRatio === 'true';
       const imageType = req.body.imageType || 'content'; // 'featured' or 'content'
+      
+      console.log('Upload parameters:', { width, height, maintainAspectRatio, imageType });
 
       // Configure transformation based on parameters
       let cropMode = 'limit';
@@ -60,7 +62,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Add different optimization for different image types
       if (imageType === 'featured') {
-        transformation.push({ dpr: 'auto' }); // Device pixel ratio optimization
+        transformation.push({ dpr: 'auto' } as any); // Device pixel ratio optimization
       }
 
       // Upload to Cloudinary using buffer
