@@ -145,3 +145,4 @@ All markdown formatting works across:
 - June 23, 2025: Migrated image storage from local files to Cloudinary cloud storage for better reliability and performance. Images are now stored in the cloud with automatic optimization
 - June 23, 2025: Fixed loading flash issue in hero section - replaced placeholder text with smooth skeleton loading animation to prevent "Your Name" from briefly appearing
 - June 23, 2025: Added comprehensive image resizing functionality with preset options (Small, Medium, Large, Banner, Square) and custom dimensions. Users can now control both featured images and content images with aspect ratio options
+- June 23, 2025: Implemented individual image resizing controls for Editor.js content images. Each image upload now shows a resize dialog with presets and custom dimensions before uploading

@@ -72,47 +72,144 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
         image: {
           class: ImageTool as any,
           config: {
-            endpoints: {
-              byFile: '/api/upload-image',
-            },
-            field: 'image',
-            types: 'image/*',
-            additionalRequestHeaders: {
-              'credentials': 'include'
-            },
             uploader: {
               uploadByFile: async (file: File) => {
-                const formData = new FormData();
-                formData.append('image', file);
-                formData.append('imageType', 'content');
-                formData.append('width', '800');
-                formData.append('height', '600');
-                formData.append('maintainAspectRatio', 'true');
-                
-                const response = await fetch('/api/upload-image', {
-                  method: 'POST',
-                  body: formData,
-                  credentials: 'include',
-                });
-                
-                if (!response.ok) {
-                  const errorText = await response.text();
-                  console.error('Upload failed:', response.status, errorText);
-                  throw new Error(`Upload failed: ${response.status} ${errorText}`);
-                }
-                
-                const result = await response.json();
-                console.log('Upload result:', result);
-                if (result.success) {
-                  return {
-                    success: 1,
-                    file: {
-                      url: result.file.url,
-                    }
+                // Show resize dialog before upload
+                return new Promise((resolve, reject) => {
+                  const showResizeDialog = () => {
+                    const dialogHtml = `
+                      <div id="image-resize-modal" style="
+                        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                        background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                        justify-content: center; z-index: 10000;
+                      ">
+                        <div style="
+                          background: white; padding: 24px; border-radius: 8px;
+                          max-width: 450px; width: 90%; max-height: 80vh; overflow-y: auto;
+                        ">
+                          <h3 style="margin: 0 0 16px; font-size: 18px; font-weight: 600;">Resize Image</h3>
+                          
+                          <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500;">Quick Presets</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                              <button data-size="400,300" style="padding: 6px 12px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Small (400×300)</button>
+                              <button data-size="800,600" style="padding: 6px 12px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Medium (800×600)</button>
+                              <button data-size="1200,900" style="padding: 6px 12px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Large (1200×900)</button>
+                              <button data-size="1200,400" style="padding: 6px 12px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Banner (1200×400)</button>
+                              <button data-size="600,600" style="padding: 6px 12px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Square (600×600)</button>
+                            </div>
+                          </div>
+
+                          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div>
+                              <label style="display: block; margin-bottom: 4px; font-size: 14px;">Width (px)</label>
+                              <input id="img-width" type="number" value="800" min="100" max="2000" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                              <label style="display: block; margin-bottom: 4px; font-size: 14px;">Height (px)</label>
+                              <input id="img-height" type="number" value="600" min="100" max="2000" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                          </div>
+
+                          <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                              <input id="img-aspect" type="checkbox" checked>
+                              Maintain aspect ratio
+                            </label>
+                            <p id="img-desc" style="margin: 8px 0 0; font-size: 12px; color: #666;">Image will be resized proportionally</p>
+                          </div>
+
+                          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                            <button id="img-cancel" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Cancel</button>
+                            <button id="img-upload" style="padding: 8px 16px; border: none; border-radius: 4px; background: #007bff; color: white; cursor: pointer;">Upload</button>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+
+                    document.body.insertAdjacentHTML('beforeend', dialogHtml);
+
+                    const modal = document.getElementById('image-resize-modal')!;
+                    const widthInput = document.getElementById('img-width') as HTMLInputElement;
+                    const heightInput = document.getElementById('img-height') as HTMLInputElement;
+                    const aspectCheck = document.getElementById('img-aspect') as HTMLInputElement;
+                    const desc = document.getElementById('img-desc')!;
+
+                    // Preset buttons
+                    modal.querySelectorAll('[data-size]').forEach(btn => {
+                      btn.addEventListener('click', () => {
+                        const [w, h] = (btn as HTMLElement).dataset.size!.split(',');
+                        widthInput.value = w;
+                        heightInput.value = h;
+                      });
+                    });
+
+                    // Aspect ratio handling
+                    aspectCheck.addEventListener('change', () => {
+                      desc.textContent = aspectCheck.checked 
+                        ? 'Image will be resized proportionally'
+                        : 'Image will be cropped to exact dimensions';
+                    });
+
+                    widthInput.addEventListener('input', () => {
+                      if (aspectCheck.checked) {
+                        heightInput.value = Math.round(parseInt(widthInput.value) * 0.75).toString();
+                      }
+                    });
+
+                    heightInput.addEventListener('input', () => {
+                      if (aspectCheck.checked) {
+                        widthInput.value = Math.round(parseInt(heightInput.value) * 1.33).toString();
+                      }
+                    });
+
+                    document.getElementById('img-cancel')!.addEventListener('click', () => {
+                      modal.remove();
+                      reject(new Error('Upload cancelled'));
+                    });
+
+                    document.getElementById('img-upload')!.addEventListener('click', async () => {
+                      const width = parseInt(widthInput.value) || 800;
+                      const height = parseInt(heightInput.value) || 600;
+                      const maintainAspectRatio = aspectCheck.checked;
+                      
+                      modal.remove();
+
+                      try {
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        formData.append('imageType', 'content');
+                        formData.append('width', width.toString());
+                        formData.append('height', height.toString());
+                        formData.append('maintainAspectRatio', maintainAspectRatio.toString());
+                        
+                        const response = await fetch('/api/upload-image', {
+                          method: 'POST',
+                          body: formData,
+                          credentials: 'include',
+                        });
+                        
+                        if (!response.ok) {
+                          throw new Error(`Upload failed: ${response.status}`);
+                        }
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                          resolve({
+                            success: 1,
+                            file: { url: result.file.url }
+                          });
+                        } else {
+                          throw new Error(result.message || 'Upload failed');
+                        }
+                      } catch (error) {
+                        reject(error);
+                      }
+                    });
                   };
-                } else {
-                  throw new Error(result.message || 'Upload failed');
-                }
+
+                  showResizeDialog();
+                });
               }
             }
           }
