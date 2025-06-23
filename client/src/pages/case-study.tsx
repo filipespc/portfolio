@@ -62,8 +62,8 @@ function EditorRenderer({ content }: { content: string }) {
 
           case 'image':
             element.innerHTML = `
-              <figure class="my-8">
-                <img src="${block.data.file?.url || block.data.url}" alt="${block.data.caption || ''}" class="w-full rounded-lg shadow-sm" />
+              <figure class="my-8 text-center">
+                <img src="${block.data.file?.url || block.data.url}" alt="${block.data.caption || ''}" class="max-w-full h-auto rounded-lg shadow-sm inline-block" />
                 ${block.data.caption ? `<figcaption class="text-center text-sm text-gray-500 mt-2">${block.data.caption}</figcaption>` : ''}
               </figure>
             `;

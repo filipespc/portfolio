@@ -148,6 +148,49 @@
   .border-sollo-gold {
     border-color: var(--sollo-gold);
   }
+
+  /* Editor.js image styles - ensure images display at their actual dimensions */
+  .ce-block__content .image-tool img,
+  .cdx-block .image-tool img {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Case study content images */
+  .prose img {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Editor.js container styles */
+  .codex-editor__redactor {
+    padding-bottom: 200px !important;
+  }
+
+  /* Image tool specific styles */
+  .image-tool {
+    text-align: center;
+  }
+
+  .image-tool img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .image-tool__caption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+  }
   
   .hover\:bg-sollo-red:hover {
     background-color: hsl(358, 69%, 45%);
