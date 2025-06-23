@@ -31,17 +31,16 @@ function EditorRenderer({ content }: { content: string }) {
           case 'paragraph':
             let processedText = block.data.text || '';
             
-            // Convert URL patterns to clickable links
-            // Pattern: [text](url) -> <a href="url">text</a>
+            // Convert markdown links first: [text](url) -> <a href="url">text</a>
             processedText = processedText.replace(
               /\[([^\]]+)\]\(([^)]+)\)/g,
               '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
             );
             
-            // Pattern: direct URLs -> clickable links
+            // Convert standalone URLs to clickable links (but not those already in <a> tags)
             processedText = processedText.replace(
-              /(https?:\/\/[^\s<>]+)/g,
-              '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+              /(^|[^">])(https?:\/\/[^\s<>"]+)/g,
+              '$1<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$2</a>'
             );
             
             // Handle existing HTML links
@@ -60,7 +59,20 @@ function EditorRenderer({ content }: { content: string }) {
             const listClass = block.data.style === 'ordered' ? 'list-decimal list-inside space-y-2 text-gray-700' : 'list-disc list-inside space-y-2 text-gray-700';
             const items = block.data.items.map((item: any) => {
               // Handle both string and object formats from Editor.js
-              const content = typeof item === 'string' ? item : (item.content || item.text || String(item));
+              let content = typeof item === 'string' ? item : (item.content || item.text || String(item));
+              
+              // Process markdown links in list items
+              content = content.replace(
+                /\[([^\]]+)\]\(([^)]+)\)/g,
+                '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+              );
+              
+              // Convert standalone URLs in list items
+              content = content.replace(
+                /(^|[^">])(https?:\/\/[^\s<>"]+)/g,
+                '$1<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$2</a>'
+              );
+              
               return `<li>${content}</li>`;
             }).join('');
             element.innerHTML = `<${listType} class="${listClass}">${items}</${listType}>`;
