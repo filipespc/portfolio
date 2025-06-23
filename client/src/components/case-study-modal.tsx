@@ -224,6 +224,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
       },
       data: caseStudy ? JSON.parse(caseStudy.content) : undefined,
       placeholder: 'Write your case study content here...',
+      inlineToolbar: ['marker', 'inlineCode'],
       onReady: () => {
         setIsEditorReady(true);
       }
