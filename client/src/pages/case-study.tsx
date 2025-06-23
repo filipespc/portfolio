@@ -29,15 +29,29 @@ function EditorRenderer({ content }: { content: string }) {
             break;
 
           case 'paragraph':
-            // Process inline links in paragraph text
-            let processedText = block.data.text;
-            if (processedText && processedText.includes('<a ')) {
-              // Ensure links have proper styling
+            let processedText = block.data.text || '';
+            
+            // Convert URL patterns to clickable links
+            // Pattern: [text](url) -> <a href="url">text</a>
+            processedText = processedText.replace(
+              /\[([^\]]+)\]\(([^)]+)\)/g,
+              '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            
+            // Pattern: direct URLs -> clickable links
+            processedText = processedText.replace(
+              /(https?:\/\/[^\s<>]+)/g,
+              '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            
+            // Handle existing HTML links
+            if (processedText.includes('<a ')) {
               processedText = processedText.replace(
                 /<a /g, 
                 '<a class="text-sollo-red underline hover:text-sollo-red/80 transition-colors" target="_blank" rel="noopener noreferrer" '
               );
             }
+            
             element.innerHTML = `<p class="text-gray-700 leading-relaxed">${processedText}</p>`;
             break;
 

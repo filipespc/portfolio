@@ -14,7 +14,15 @@ export class HTMLParagraphTool {
     return true;
   }
 
-  constructor({ data, api }: any) {
+  static get enableLineBreaks() {
+    return true;
+  }
+
+  static get DEFAULT_PLACEHOLDER() {
+    return 'Type text or HTML links like <a href="url">text</a>';
+  }
+
+  constructor({ data, api, config }: any) {
     this.api = api;
     this.data = {
       text: data.text || '',

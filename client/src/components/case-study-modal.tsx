@@ -68,12 +68,7 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
           }
         },
         list: List as any,
-        paragraph: {
-          class: HTMLParagraphTool as any,
-          config: {
-            preserveBlank: true
-          }
-        },
+        paragraph: Paragraph as any,
         quote: Quote as any,
         code: Code as any,
         delimiter: Delimiter as any,
