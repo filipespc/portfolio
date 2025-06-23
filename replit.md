@@ -144,3 +144,4 @@ All markdown formatting works across:
 - June 21, 2025: Added comprehensive image support to case studies - users can now upload and embed images directly in case study content using Editor.js image tool with secure file upload handling
 - June 23, 2025: Migrated image storage from local files to Cloudinary cloud storage for better reliability and performance. Images are now stored in the cloud with automatic optimization
 - June 23, 2025: Fixed loading flash issue in hero section - replaced placeholder text with smooth skeleton loading animation to prevent "Your Name" from briefly appearing
+- June 23, 2025: Added comprehensive image resizing functionality with preset options (Small, Medium, Large, Banner, Square) and custom dimensions. Users can now control both featured images and content images with aspect ratio options

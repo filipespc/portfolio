@@ -39,6 +39,9 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [featuredImageWidth, setFeaturedImageWidth] = useState<number>(800);
+  const [featuredImageHeight, setFeaturedImageHeight] = useState<number>(600);
+  const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   
   const editorRef = useRef<EditorJS | null>(null);
   const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -81,6 +84,10 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
               uploadByFile: async (file: File) => {
                 const formData = new FormData();
                 formData.append('image', file);
+                formData.append('imageType', 'content');
+                formData.append('width', '800');
+                formData.append('height', '600');
+                formData.append('maintainAspectRatio', 'true');
                 
                 const response = await fetch('/api/upload-image', {
                   method: 'POST',
@@ -161,6 +168,10 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
     try {
       const formData = new FormData();
       formData.append('image', file);
+      formData.append('width', featuredImageWidth.toString());
+      formData.append('height', featuredImageHeight.toString());
+      formData.append('maintainAspectRatio', maintainAspectRatio.toString());
+      formData.append('imageType', 'featured');
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -388,6 +399,94 @@ export default function CaseStudyModal({ caseStudy, onClose, onSave }: CaseStudy
                   />
                 </div>
               )}
+              
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <Label className="text-sm font-medium mb-3 block">Image Resize Options</Label>
+                
+                {/* Preset sizes */}
+                <div className="mb-4">
+                  <Label className="text-xs mb-2 block">Quick Presets</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Small', w: 400, h: 300 },
+                      { label: 'Medium', w: 800, h: 600 },
+                      { label: 'Large', w: 1200, h: 900 },
+                      { label: 'Banner', w: 1200, h: 400 },
+                      { label: 'Square', w: 600, h: 600 }
+                    ].map((preset) => (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        onClick={() => {
+                          setFeaturedImageWidth(preset.w);
+                          setFeaturedImageHeight(preset.h);
+                        }}
+                        className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                      >
+                        {preset.label} ({preset.w}×{preset.h})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom dimensions */}
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <Label htmlFor="imageWidth" className="text-xs">Width (px)</Label>
+                    <Input
+                      id="imageWidth"
+                      type="number"
+                      value={featuredImageWidth}
+                      onChange={(e) => {
+                        const width = parseInt(e.target.value) || 800;
+                        setFeaturedImageWidth(width);
+                        if (maintainAspectRatio) {
+                          setFeaturedImageHeight(Math.round(width * 0.75));
+                        }
+                      }}
+                      min="100"
+                      max="2000"
+                      className="text-xs"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="imageHeight" className="text-xs">Height (px)</Label>
+                    <Input
+                      id="imageHeight"
+                      type="number"
+                      value={featuredImageHeight}
+                      onChange={(e) => {
+                        const height = parseInt(e.target.value) || 600;
+                        setFeaturedImageHeight(height);
+                        if (maintainAspectRatio) {
+                          setFeaturedImageWidth(Math.round(height * 1.33));
+                        }
+                      }}
+                      min="100"
+                      max="2000"
+                      className="text-xs"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 mb-2">
+                  <input
+                    type="checkbox"
+                    id="aspectRatio"
+                    checked={maintainAspectRatio}
+                    onChange={(e) => setMaintainAspectRatio(e.target.checked)}
+                    className="text-xs"
+                  />
+                  <Label htmlFor="aspectRatio" className="text-xs">Maintain aspect ratio</Label>
+                </div>
+                
+                <p className="text-xs text-gray-500">
+                  {maintainAspectRatio 
+                    ? 'Image will be resized proportionally to fit within dimensions' 
+                    : 'Image will be cropped to exact dimensions'
+                  }
+                </p>
+              </div>
             </div>
           </div>
 

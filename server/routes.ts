@@ -33,11 +33,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Image upload endpoint with Cloudinary
+  // Image upload endpoint with Cloudinary and resizing
   app.post('/api/upload-image', requireAuth, upload.single('image'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ success: 0, message: 'No file uploaded' });
+      }
+
+      // Get resize parameters from request
+      const width = parseInt(req.body.width) || 800;
+      const height = parseInt(req.body.height) || 600;
+      const maintainAspectRatio = req.body.maintainAspectRatio === 'true';
+      const imageType = req.body.imageType || 'content'; // 'featured' or 'content'
+
+      // Configure transformation based on parameters
+      let cropMode = 'limit';
+      if (!maintainAspectRatio) {
+        cropMode = 'fill'; // Will crop to exact dimensions
+      }
+
+      const transformation = [
+        { width: width, height: height, crop: cropMode },
+        { quality: 'auto' },
+        { fetch_format: 'auto' }
+      ];
+
+      // Add different optimization for different image types
+      if (imageType === 'featured') {
+        transformation.push({ dpr: 'auto' }); // Device pixel ratio optimization
       }
 
       // Upload to Cloudinary using buffer
@@ -45,12 +68,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cloudinary.uploader.upload_stream(
           {
             resource_type: 'image',
-            folder: 'portfolio-case-studies',
-            transformation: [
-              { width: 1200, height: 800, crop: 'limit' },
-              { quality: 'auto' },
-              { fetch_format: 'auto' }
-            ]
+            folder: `portfolio-case-studies/${imageType}`,
+            transformation: transformation
           },
           (error, result) => {
             if (error) reject(error);
