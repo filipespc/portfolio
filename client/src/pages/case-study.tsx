@@ -35,7 +35,11 @@ function EditorRenderer({ content }: { content: string }) {
           case 'list':
             const listType = block.data.style === 'ordered' ? 'ol' : 'ul';
             const listClass = block.data.style === 'ordered' ? 'list-decimal list-inside space-y-2 text-gray-700' : 'list-disc list-inside space-y-2 text-gray-700';
-            const items = block.data.items.map((item: string) => `<li>${item}</li>`).join('');
+            const items = block.data.items.map((item: any) => {
+              // Handle both string and object formats from Editor.js
+              const content = typeof item === 'string' ? item : (item.content || item.text || String(item));
+              return `<li>${content}</li>`;
+            }).join('');
             element.innerHTML = `<${listType} class="${listClass}">${items}</${listType}>`;
             break;
 
