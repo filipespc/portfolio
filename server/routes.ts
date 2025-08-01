@@ -8,6 +8,65 @@ import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add a test endpoint before session middleware
+  app.get('/api/test', (req, res) => {
+    res.json({ message: 'API working!', timestamp: new Date().toISOString() });
+  });
+
+  // Public routes BEFORE session middleware to avoid auth issues
+  app.get("/api/profile", async (req, res) => {
+    try {
+      const profileData = await storage.getProfile();
+      res.json(profileData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  app.get("/api/experiences", async (req, res) => {
+    try {
+      const experiences = await storage.getAllExperiences();
+      res.json(experiences);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch experiences" });
+    }
+  });
+
+  app.get("/api/case-studies", async (req, res) => {
+    try {
+      const caseStudies = await storage.getPublishedCaseStudies();
+      res.json(caseStudies);
+    } catch (error) {
+      console.error("Error fetching case studies:", error);
+      res.status(500).json({ message: "Failed to fetch case studies" });
+    }
+  });
+
+  app.get("/api/case-studies/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const caseStudy = await storage.getCaseStudyBySlug(slug);
+      
+      if (!caseStudy || !caseStudy.isPublished) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+      
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error fetching case study:", error);
+      res.status(500).json({ message: "Failed to fetch case study" });
+    }
+  });
+
+  app.get("/api/education", async (req, res) => {
+    try {
+      const educationList = await storage.getAllEducation();
+      res.json(educationList);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch education" });
+    }
+  });
+
   // Setup session middleware
   app.use(getSession());
 
@@ -197,15 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Profile routes
-  app.get("/api/profile", async (req, res) => {
-    try {
-      const profileData = await storage.getProfile();
-      res.json(profileData);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch profile" });
-    }
-  });
+  // Profile routes (public route moved above)
 
   app.put("/api/admin/profile", requireAuth, async (req, res) => {
     try {
@@ -255,15 +306,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Public experience routes
-  app.get("/api/experiences", async (req, res) => {
-    try {
-      const experiences = await storage.getAllExperiences();
-      res.json(experiences);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch experiences" });
-    }
-  });
+  // Public experience routes (moved above)
 
   // Admin-only experience routes
   app.get("/api/admin/experiences/:id", requireAuth, async (req, res) => {
