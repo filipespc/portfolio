@@ -11,23 +11,32 @@ export function getSession() {
   // Use memory store for local development, PostgreSQL for production
   let sessionStore;
   
-  if (process.env.NODE_ENV === 'production') {
-    // Production: Use PostgreSQL session store
-    const pgStore = connectPg(session);
-    sessionStore = new pgStore({
-      conString: process.env.DATABASE_URL,
-      createTableIfMissing: true,
-      ttl: sessionTtl,
-      tableName: 'sessions',
-    });
-    console.log('Using PostgreSQL session store for production');
-  } else {
-    // Development: Use memory store
+  try {
+    if (process.env.NODE_ENV === 'production') {
+      // Production: Use PostgreSQL session store
+      const pgStore = connectPg(session);
+      sessionStore = new pgStore({
+        conString: process.env.DATABASE_URL,
+        createTableIfMissing: true,
+        ttl: sessionTtl,
+        tableName: 'sessions',
+      });
+      console.log('Using PostgreSQL session store for production');
+    } else {
+      // Development: Use memory store
+      const MemoryStoreSession = MemoryStore(session);
+      sessionStore = new MemoryStoreSession({
+        checkPeriod: 86400000, // prune expired entries every 24h
+      });
+      console.log('Using memory session store for development');
+    }
+  } catch (error) {
+    console.error('Session store initialization failed, falling back to memory store:', error);
+    // Fallback to memory store if PostgreSQL fails
     const MemoryStoreSession = MemoryStore(session);
     sessionStore = new MemoryStoreSession({
-      checkPeriod: 86400000, // prune expired entries every 24h
+      checkPeriod: 86400000,
     });
-    console.log('Using memory session store for development');
   }
   
   return session({
