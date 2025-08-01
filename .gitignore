@@ -4,3 +4,22 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Environment files
+.env
+.env.local
+.env.production
+*.env
+
+# Development files
+*.log
+uploads/
+cookies.txt
+admin_cookies.txt
+
+# IDE files
+.vscode/
+.idea/
+
+# System files
+Thumbs.db
